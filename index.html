@@ -3,128 +3,269 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Photo Designer</title>
+<title>Photo Editor</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #111;
-    color: white;
-    text-align: center;
+body{
+    margin:0;
+    background:#0f0f0f;
+    color:white;
+    font-family:Arial, sans-serif;
+    text-align:center;
+    touch-action:none;
 }
 
-.container {
-    padding: 20px;
+.container{ padding:15px; }
+
+canvas{
+    margin-top:15px;
+    width:100%;
+    max-width:420px;
+    background:#222;
+    border-radius:12px;
 }
 
-canvas {
-    margin-top: 15px;
-    width: 100%;
-    max-width: 400px;
-    background: #222;
-    border-radius: 10px;
+.controls{
+    margin-top:10px;
 }
 
-.designs {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-top: 15px;
+select, button, input[type=color]{
+    margin-top:8px;
+    padding:8px;
+    border-radius:6px;
+    border:none;
 }
 
-.designs img {
-    width: 100%;
-    cursor: pointer;
-    border-radius: 6px;
-    border: 2px solid transparent;
-}
-
-.designs img:hover {
-    border: 2px solid #00ff99;
-}
-
-button {
-    margin-top: 15px;
-    padding: 12px 20px;
-    background: #00ff99;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
+.activeMode{
+    background:#ff9800;
+    color:black;
 }
 </style>
 </head>
 
 <body>
+
 <div class="container">
 
-<h2>Загрузить фото</h2>
+<h2>Редактор фото</h2>
 
 <input type="file" id="upload" accept="image/*">
 
-<canvas id="canvas" width="1080" height="1080"></canvas>
+<div class="controls">
+    <input type="color" id="colorPicker" value="#00ff99"><br>
 
-<div class="designs" id="designContainer"></div>
+    <select id="fontSelect">
+        <option value="Arial">Arial</option>
+        <option value="Impact">Impact</option>
+        <option value="Verdana">Verdana</option>
+        <option value="Tahoma">Tahoma</option>
+        <option value="Courier New">Courier New</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Trebuchet MS">Trebuchet</option>
+        <option value="Times New Roman">Times</option>
+        <option value="Comic Sans MS">Comic</option>
+        <option value="Lucida Console">Lucida</option>
+        <option value="Segoe UI">Segoe</option>
+    </select><br>
+
+    <button id="editPhotoBtn">Изменить обрезку</button>
+    <button id="editTextBtn">Двигать текст</button>
+</div>
+
+<canvas id="canvas" width="1080" height="1080"></canvas>
 
 <button onclick="downloadImage()">Скачать</button>
 
 </div>
 
 <script>
+let tg = window.Telegram.WebApp;
+tg.expand();
+
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 let userImage = new Image();
-let selectedDesign = new Image();
 
-const designContainer = document.getElementById("designContainer");
+// ===== РЕЖИМЫ =====
+let mode = "text"; // text | photo
 
-// Загружаем 11 PNG автоматически
-for (let i = 1; i <= 11; i++) {
-    const img = document.createElement("img");
-    img.src = designs/${i}.png;
-    img.onclick = () => {
-        selectedDesign.src = img.src;
-        selectedDesign.onload = drawCanvas;
-    };
-    designContainer.appendChild(img);
-}
+document.getElementById("editPhotoBtn").onclick = ()=>{
+    mode="photo";
+};
+document.getElementById("editTextBtn").onclick = ()=>{
+    mode="text";
+};
 
-// Загрузка фото
-document.getElementById("upload").addEventListener("change", function(e) {
-    const reader = new FileReader();
-    reader.onload = function(event) {
-        userImage.onload = drawCanvas;
-        userImage.src = event.target.result;
+// ===== НАСТРОЙКИ ТЕКСТА =====
+let selectedColor="#00ff99";
+let selectedFont="Arial";
+let textX=540;
+let textY=1000;
+let textScale=1;
+
+// ===== НАСТРОЙКИ ФОТО =====
+let imgX=0;
+let imgY=0;
+let imgScale=1;
+
+// ===== DRAG =====
+let isDragging=false;
+let lastX=0;
+let lastY=0;
+
+// ===== ЗАГРУЗКА =====
+document.getElementById("upload").addEventListener("change", function(e){
+    const reader=new FileReader();
+    reader.onload=function(event){
+        userImage=new Image();
+        userImage.onload=()=>{
+            imgScale=1080/Math.min(userImage.width,userImage.height);
+            imgX=(1080-userImage.width*imgScale)/2;
+            imgY=(1080-userImage.height*imgScale)/2;
+            drawCanvas();
+        };
+        userImage.src=event.target.result;
     };
     reader.readAsDataURL(e.target.files[0]);
 });
 
-// Рисуем всё
-function drawCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+// ===== ЦВЕТ =====
+document.getElementById("colorPicker").addEventListener("input", e=>{
+    selectedColor=e.target.value;
+    drawCanvas();
+});
 
-    if (userImage.src) {
-        const size = Math.min(userImage.width, userImage.height);
-        const sx = (userImage.width - size) / 2;
-        const sy = (userImage.height - size) / 2;
+// ===== ШРИФТ =====
+document.getElementById("fontSelect").addEventListener("change", e=>{
+    selectedFont=e.target.value;
+    drawCanvas();
+});
 
-        ctx.drawImage(userImage, sx, sy, size, size, 0, 0, 1080, 1080);
+// ===== РИСОВАНИЕ =====
+function drawCanvas(){
+
+    ctx.clearRect(0,0,1080,1080);
+
+    if(userImage.src){
+        ctx.drawImage(
+            userImage,
+            imgX,
+            imgY,
+            userImage.width*imgScale,
+            userImage.height*imgScale
+        );
     }
 
-    if (selectedDesign.src) {
-        ctx.drawImage(selectedDesign, 0, 0, 1080, 1080);
-    }
+    // Свечение
+    ctx.shadowColor=selectedColor;
+    ctx.shadowBlur=30;
+    ctx.shadowOffsetX=0;
+    ctx.shadowOffsetY=0;
+
+    ctx.textAlign="center";
+    ctx.font=`bold ${120*textScale}px ${selectedFont}`;
+
+    ctx.fillStyle="white";
+    ctx.fillText("КОД", textX, textY-120*textScale);
+
+    ctx.fillStyle=selectedColor;
+    ctx.fillText("PRIVET", textX, textY);
+
+    ctx.shadowBlur=0;
 }
 
-// Скачать
-function downloadImage() {
-    const link = document.createElement("a");
-    link.download = "result.png";
-    link.href = canvas.toDataURL();
+// ===== MOUSE =====
+canvas.addEventListener("mousedown",(e)=>{
+    isDragging=true;
+    lastX=e.offsetX;
+    lastY=e.offsetY;
+});
+
+canvas.addEventListener("mousemove",(e)=>{
+    if(!isDragging) return;
+
+    let dx=(e.offsetX-lastX)*(1080/canvas.clientWidth);
+    let dy=(e.offsetY-lastY)*(1080/canvas.clientHeight);
+
+    if(mode==="text"){
+        textX+=dx;
+        textY+=dy;
+    }
+
+    if(mode==="photo"){
+        imgX+=dx;
+        imgY+=dy;
+    }
+
+    lastX=e.offsetX;
+    lastY=e.offsetY;
+    drawCanvas();
+});
+
+canvas.addEventListener("mouseup",()=> isDragging=false);
+canvas.addEventListener("mouseleave",()=> isDragging=false);
+
+// ===== SCALE =====
+canvas.addEventListener("wheel",(e)=>{
+    e.preventDefault();
+
+    if(mode==="text"){
+        textScale += e.deltaY*-0.001;
+        textScale=Math.min(Math.max(.5,textScale),3);
+    }
+
+    if(mode==="photo"){
+        imgScale += e.deltaY*-0.001;
+        imgScale=Math.min(Math.max(.5,imgScale),5);
+    }
+
+    drawCanvas();
+});
+
+// ===== TOUCH PINCH =====
+canvas.addEventListener("touchmove",(e)=>{
+    if(e.touches.length===2){
+
+        let dx=e.touches[0].clientX-e.touches[1].clientX;
+        let dy=e.touches[0].clientY-e.touches[1].clientY;
+        let distance=Math.sqrt(dx*dx+dy*dy);
+
+        if(!canvas.initialDistance){
+            canvas.initialDistance=distance;
+            canvas.initialScaleText=textScale;
+            canvas.initialScaleImg=imgScale;
+        }else{
+            let factor=distance/canvas.initialDistance;
+
+            if(mode==="text"){
+                textScale=canvas.initialScaleText*factor;
+            }
+
+            if(mode==="photo"){
+                imgScale=canvas.initialScaleImg*factor;
+            }
+
+            drawCanvas();
+        }
+    }
+});
+
+canvas.addEventListener("touchend",()=>{
+    canvas.initialDistance=null;
+});
+
+// ===== DOWNLOAD =====
+function downloadImage(){
+    const link=document.createElement("a");
+    link.download="photo.png";
+    link.href=canvas.toDataURL("image/png");
     link.click();
 }
+
+drawCanvas();
 </script>
 
 </body>
