@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photo Designer</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: white;
+    text-align: center;
+}
+
+.container {
+    padding: 20px;
+}
+
+canvas {
+    margin-top: 15px;
+    width: 100%;
+    max-width: 400px;
+    background: #222;
+    border-radius: 10px;
+}
+
+.designs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.designs img {
+    width: 100%;
+    cursor: pointer;
+    border-radius: 6px;
+    border: 2px solid transparent;
+}
+
+.designs img:hover {
+    border: 2px solid #00ff99;
+}
+
+button {
+    margin-top: 15px;
+    padding: 12px 20px;
+    background: #00ff99;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h2>Загрузить фото</h2>
+
+<input type="file" id="upload" accept="image/*">
+
+<canvas id="canvas" width="1080" height="1080"></canvas>
+
+<div class="designs" id="designContainer"></div>
+
+<button onclick="downloadImage()">Скачать</button>
+
+</div>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+let userImage = new Image();
+let selectedDesign = new Image();
+
+const designContainer = document.getElementById("designContainer");
+
+// Загружаем 11 PNG автоматически
+for (let i = 1; i <= 11; i++) {
+    const img = document.createElement("img");
+    img.src = designs/${i}.png;
+    img.onclick = () => {
+        selectedDesign.src = img.src;
+        selectedDesign.onload = drawCanvas;
+    };
+    designContainer.appendChild(img);
+}
+
+// Загрузка фото
+document.getElementById("upload").addEventListener("change", function(e) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        userImage.onload = drawCanvas;
+        userImage.src = event.target.result;
+    };
+    reader.readAsDataURL(e.target.files[0]);
+});
+
+// Рисуем всё
+function drawCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (userImage.src) {
+        const size = Math.min(userImage.width, userImage.height);
+        const sx = (userImage.width - size) / 2;
+        const sy = (userImage.height - size) / 2;
+
+        ctx.drawImage(userImage, sx, sy, size, size, 0, 0, 1080, 1080);
+    }
+
+    if (selectedDesign.src) {
+        ctx.drawImage(selectedDesign, 0, 0, 1080, 1080);
+    }
+}
+
+// Скачать
+function downloadImage() {
+    const link = document.createElement("a");
+    link.download = "result.png";
+    link.href = canvas.toDataURL();
+    link.click();
+}
+</script>
+
+</body>
+</html>
