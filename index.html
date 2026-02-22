@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <title>PRIVET Avatar Editor</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Oswald&family=Rubik+Mono+One&family=Orbitron:wght@700&family=Russo+One&family=Exo+2:wght@800&family=Teko:wght@700&family=Montserrat:wght@900&family=Rajdhani:wght@700&family=Play:wght@700&display=swap" rel="stylesheet">
 
-<!-- Официальный Telegram Web App SDK -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
@@ -17,7 +17,9 @@
 --accent:#2ea6d6;
 --text:#e8f1ff;
 }
+
 *{box-sizing:border-box}
+
 html,body{
 margin:0;
 padding:0;
@@ -27,21 +29,24 @@ font-family:Inter,Arial,sans-serif;
 background:linear-gradient(180deg,var(--bg1),var(--bg2));
 color:var(--text);
 overflow:hidden;
-touch-action: none; /* Prevent native scroll/zoom interference */
+touch-action:none;
 }
+
 .app{
 height:100vh;
 width:100vw;
-padding:10px; /* Reduced padding for fuller feel */
+padding:10px;
 display:flex;
 flex-direction:column;
 }
+
 .header{
 text-align:center;
 font-size:26px;
 font-weight:600;
 margin-bottom:10px;
 }
+
 .layout{
 display:grid;
 grid-template-columns:1fr 1fr;
@@ -49,6 +54,7 @@ gap:15px;
 flex:1;
 overflow:hidden;
 }
+
 .card{
 background:var(--card);
 border-radius:14px;
@@ -57,10 +63,11 @@ display:flex;
 flex-direction:column;
 overflow:auto;
 }
+
 .preview-box{
 width:100%;
 height:100%;
-max-width:80vh; /* Responsive max, based on viewport height for square aspect */
+max-width:80vh;
 max-height:80vh;
 aspect-ratio:1/1;
 background:#222;
@@ -70,8 +77,9 @@ margin:0 auto;
 display:flex;
 align-items:center;
 justify-content:center;
-touch-action: pinch-zoom pan-x pan-y; /* Allow touch gestures */
+touch-action:pinch-zoom pan-x pan-y;
 }
+
 canvas{
 width:100%;
 height:100%;
@@ -79,6 +87,7 @@ object-fit:contain;
 display:block;
 image-rendering:high-quality;
 }
+
 button{
 padding:12px;
 border-radius:10px;
@@ -88,15 +97,31 @@ color:white;
 cursor:pointer;
 margin-bottom:10px;
 }
+
+/* Mobile vertical layout */
+@media(max-width:900px){
+.layout{
+grid-template-columns:1fr;
+grid-template-rows:auto 1fr;
+}
+
+.preview-box{
+max-width:100%;
+max-height:55vh;
+}
+}
+
 .section-title{
 margin:15px 0 10px;
 opacity:.8;
 }
+
 .color-grid{
 display:grid;
 grid-template-columns:repeat(3,1fr);
 gap:10px;
 }
+
 .color-item{
 display:flex;
 align-items:center;
@@ -106,16 +131,19 @@ border-radius:8px;
 background:#0e1b2a;
 cursor:pointer;
 }
+
 .color-dot{
 width:14px;
 height:14px;
 border-radius:50%;
 }
+
 .design-grid{
 display:grid;
 grid-template-columns:repeat(2,1fr);
 gap:10px;
 }
+
 .design-item{
 background:#0b1624;
 padding:10px;
@@ -124,40 +152,31 @@ text-align:center;
 cursor:pointer;
 border:2px solid transparent;
 }
+
 .design-item.active{
 border:2px solid var(--accent);
 }
-.info{
-margin-top:15px;
-font-size:13px;
-opacity:.7;
-}
-@media(max-width:900px){
-.layout{
-grid-template-columns:1fr;
-grid-template-rows:1fr 1fr;
-}
-.preview-box {
-max-width:100%;
-max-height:50vh; /* Adjust for mobile to avoid squishing */
-}
-}
 </style>
 </head>
+
 <body>
+
 <div class="app">
 <div class="header">🎨 PRIVET Avatar Editor</div>
+
 <div class="layout">
+
 <div class="card">
 <input type="file" id="upload" hidden>
 <button onclick="upload.click()">📷 Загрузить фото</button>
 <button id="editPhotoBtn">✂ Изменить обрезку</button>
 <button onclick="downloadImage()">💾 Сохранить PNG</button>
-<button id="fullscreenBtn">🖥 Полный экран</button>
+
 <div class="preview-box">
 <canvas id="canvas" width="1080" height="1080"></canvas>
 </div>
 </div>
+
 <div class="card">
 <div class="section-title">Цвет PRIVET</div>
 <div class="color-grid">
@@ -165,9 +184,10 @@ max-height:50vh; /* Adjust for mobile to avoid squishing */
 <div class="color-item" onclick="setColor('red')"><div class="color-dot" style="background:red"></div>Красный</div>
 <div class="color-item" onclick="setColor('blue')"><div class="color-dot" style="background:blue"></div>Синий</div>
 <div class="color-item" onclick="setColor('green')"><div class="color-dot" style="background:green"></div>Зелёный</div>
-<div class="color-item" onclick="setColor('yellow')"><div class="color-dot" style="background:gold"></div>Жёлтый</div>
+<div class="color-item" onclick="setColor('gold')"><div class="color-dot" style="background:gold"></div>Жёлтый</div>
 <div class="color-item" onclick="setColor('purple')"><div class="color-dot" style="background:purple"></div>Фиолетовый</div>
 </div>
+
 <div class="section-title">Выбери шрифт</div>
 <div class="design-grid" id="fonts"></div>
 </div>
@@ -176,272 +196,286 @@ max-height:50vh; /* Adjust for mobile to avoid squishing */
 
 <script>
 window.addEventListener("load", async () => {
-  const tg = window.Telegram?.WebApp;
 
-  if (tg) {
-    try {
-      // Расширяем по высоте (базовый метод, работает всегда)
-      tg.expand();
+const tg = window.Telegram?.WebApp;
 
-      // Проверяем поддержку версии и запрашиваем fullscreen
-      if (tg.isVersionAtLeast && tg.isVersionAtLeast("8.0")) {
-        try {
-          await tg.requestFullscreen();
-          console.log("Fullscreen успешно запрошен (автоматически)");
-        } catch (err) {
-          console.warn("Автоматический requestFullscreen не сработал:", err);
-        }
-      } else {
-        console.log("Версия Telegram ниже 8.0 — fullscreen недоступен");
-      }
+if(tg){
+tg.ready();
+tg.expand();
 
-      // Слушаем изменения состояния fullscreen (для дебага)
-      tg.onEvent("fullscreenChanged", () => {
-        console.log("Fullscreen теперь:", tg.isFullscreen ? "включён" : "выключен");
-      });
+if(tg.isVersionAtLeast?.("8.0")){
+tg.requestFullscreen?.().catch(()=>{});
+}
+}
 
-      tg.onEvent("fullscreenFailed", (payload) => {
-        console.warn("Fullscreen failed:", payload?.error || "неизвестная ошибка");
-      });
+/* ===== CANVAS LOGIC ===== */
 
-      // Кнопка Полный экран — используем Telegram-метод внутри TMA
-      const fsBtn = document.getElementById("fullscreenBtn");
-      if (fsBtn) {
-        fsBtn.onclick = async () => {
-          if (tg.isVersionAtLeast && tg.isVersionAtLeast("8.0")) {
-            try {
-              await tg.requestFullscreen();
-              console.log("Ручной fullscreen запрошен");
-            } catch (e) {
-              console.warn("Ручной tg.requestFullscreen error:", e);
-            }
-          } else {
-            // Fallback для браузера / теста вне Telegram
-            if (document.documentElement.requestFullscreen) {
-              document.documentElement.requestFullscreen().catch(e => console.warn(e));
-            } else if (document.documentElement.webkitRequestFullscreen) {
-              document.documentElement.webkitRequestFullscreen();
-            }
-          }
-        };
-      }
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d",{willReadFrequently:true});
 
-    } catch (e) {
-      console.error("Ошибка инициализации Telegram WebApp:", e);
-    }
-  } else {
-    console.warn("Telegram WebApp не обнаружен — запущено не в мини-аппке?");
-  }
+const upload=document.getElementById("upload");
+const fontsContainer=document.getElementById("fonts");
+const editPhotoBtn=document.getElementById("editPhotoBtn");
 
-  // ────────────────────────────────────────────────
-  // Твой редактор аватарок (без изменений)
-  const canvas = document.getElementById("canvas");
-  const ctx = canvas.getContext("2d", { willReadFrequently: true });
-  const upload = document.getElementById("upload");
-  const fontsContainer = document.getElementById("fonts");
-  const editPhotoBtn = document.getElementById("editPhotoBtn");
+let userImage=new Image();
+let mode="text";
+let selectedColor="white";
+let selectedFont="Bebas Neue";
 
-  let userImage = new Image();
-  let mode = "text";
-  let selectedColor = "white";
-  let selectedFont = "Bebas Neue";
-  let textX = 540;
-  let textY = 1000;
-  let textScale = 1;
-  let imgX = 0;
-  let imgY = 0;
-  let imgScale = 1;
+let textX=540,textY=1000,textScale=1;
+let imgX=0,imgY=0,imgScale=1;
 
-  const fonts = [
-    'Bebas Neue', 'Anton', 'Oswald', 'Rubik Mono One', 'Orbitron',
-    'Russo One', 'Exo 2', 'Teko', 'Montserrat', 'Rajdhani', 'Play'
-  ];
-  fonts.forEach((font, i) => {
-    const div = document.createElement("div");
-    div.className = "design-item" + (i === 0 ? " active" : "");
-    div.style.fontFamily = font;
-    div.innerText = "КОД PRIVET";
-    div.onclick = () => {
-      document.querySelectorAll(".design-item").forEach(d => d.classList.remove("active"));
-      div.classList.add("active");
-      selectedFont = font;
-      drawCanvas();
-    };
-    fontsContainer.appendChild(div);
-  });
+/* Fonts */
 
-  upload.onchange = e => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      userImage = new Image();
-      userImage.onload = () => {
-        centerImage();
-        drawCanvas();
-      };
-      userImage.src = reader.result;
-    };
-    reader.readAsDataURL(e.target.files[0]);
-  };
+const fonts=[
+'Bebas Neue','Anton','Oswald','Rubik Mono One',
+'Orbitron','Russo One','Exo 2','Teko',
+'Montserrat','Rajdhani','Play'
+];
 
-  function centerImage() {
-    const canvasSize = 1080;
-    const scale = Math.min(
-      canvasSize / userImage.width,
-      canvasSize / userImage.height
-    ) * 0.9;
-    imgScale = scale;
-    imgX = (canvasSize - userImage.width * imgScale) / 2;
-    imgY = (canvasSize - userImage.height * imgScale) / 2;
-  }
+fonts.forEach((font,i)=>{
+const div=document.createElement("div");
+div.className="design-item"+(i===0?" active":"");
+div.style.fontFamily=font;
+div.innerText="КОД PRIVET";
 
-  function setColor(color) {
-    selectedColor = color;
-    drawCanvas();
-  }
+div.onclick=()=>{
+document.querySelectorAll(".design-item")
+.forEach(d=>d.classList.remove("active"));
 
-  function drawCanvas() {
-    ctx.clearRect(0, 0, 1080, 1080);
-    ctx.fillStyle = "#111";
-    ctx.fillRect(0, 0, 1080, 1080);
-    if (userImage.src) {
-      ctx.drawImage(
-        userImage,
-        imgX,
-        imgY,
-        userImage.width * imgScale,
-        userImage.height * imgScale
-      );
-    }
-    ctx.save();
-    ctx.textAlign = "center";
-    ctx.font = `bold ${120 * textScale}px ${selectedFont}`;
-    ctx.fillStyle = "white";
-    ctx.shadowColor = "white";
-    ctx.shadowBlur = 30;
-    ctx.fillText("КОД", textX, textY - 120 * textScale);
-    ctx.fillStyle = selectedColor;
-    ctx.shadowColor = selectedColor;
-    ctx.fillText("PRIVET", textX, textY);
-    ctx.restore();
-  }
+div.classList.add("active");
+selectedFont=font;
+drawCanvas();
+};
 
-  let isDragging = false;
-  let lastX = 0;
-  let lastY = 0;
+fontsContainer.appendChild(div);
+});
 
-  canvas.addEventListener("mousedown", e => {
-    isDragging = true;
-    lastX = e.offsetX;
-    lastY = e.offsetY;
-  });
+/* Upload */
 
-  canvas.addEventListener("mousemove", e => {
-    if (!isDragging) return;
-    let dx = (e.offsetX - lastX) * (1080 / canvas.clientWidth);
-    let dy = (e.offsetY - lastY) * (1080 / canvas.clientHeight);
-    if (mode === "text") {
-      textX += dx;
-      textY += dy;
-    } else {
-      imgX += dx;
-      imgY += dy;
-    }
-    lastX = e.offsetX;
-    lastY = e.offsetY;
-    drawCanvas();
-  });
+upload.onchange=e=>{
+const reader=new FileReader();
 
-  canvas.addEventListener("mouseup", () => isDragging = false);
-  canvas.addEventListener("mouseleave", () => isDragging = false);
+reader.onload=()=>{
+userImage=new Image();
 
-  canvas.addEventListener("wheel", e => {
-    e.preventDefault();
-    const scaleFactor = e.deltaY * -0.001;
-    if (mode === "text") {
-      textScale += scaleFactor;
-      textScale = Math.min(Math.max(0.5, textScale), 3);
-    } else {
-      imgScale += scaleFactor;
-      imgScale = Math.min(Math.max(0.5, imgScale), 5);
-    }
-    drawCanvas();
-  });
+userImage.onload=()=>{
+const canvasSize=1080;
+const scale=Math.min(
+canvasSize/userImage.width,
+canvasSize/userImage.height
+)*0.9;
 
-  let touchStartDist = 0;
-  let touchStartScale = 1;
+imgScale=scale;
+imgX=(canvasSize-userImage.width*imgScale)/2;
+imgY=(canvasSize-userImage.height*imgScale)/2;
 
-  canvas.addEventListener("touchstart", e => {
-    e.preventDefault();
-    if (e.touches.length === 1) {
-      isDragging = true;
-      lastX = e.touches[0].clientX - canvas.getBoundingClientRect().left;
-      lastY = e.touches[0].clientY - canvas.getBoundingClientRect().top;
-    } else if (e.touches.length === 2) {
-      const dx = e.touches[0].clientX - e.touches[1].clientX;
-      const dy = e.touches[0].clientY - e.touches[1].clientY;
-      touchStartDist = Math.sqrt(dx * dx + dy * dy);
-      touchStartScale = (mode === "text") ? textScale : imgScale;
-    }
-  }, { passive: false });
+drawCanvas();
+};
 
-  canvas.addEventListener("touchmove", e => {
-    e.preventDefault();
-    if (e.touches.length === 1 && isDragging) {
-      const offsetX = e.touches[0].clientX - canvas.getBoundingClientRect().left;
-      const offsetY = e.touches[0].clientY - canvas.getBoundingClientRect().top;
-      let dx = (offsetX - lastX) * (1080 / canvas.clientWidth);
-      let dy = (offsetY - lastY) * (1080 / canvas.clientHeight);
-      if (mode === "text") {
-        textX += dx;
-        textY += dy;
-      } else {
-        imgX += dx;
-        imgY += dy;
-      }
-      lastX = offsetX;
-      lastY = offsetY;
-      drawCanvas();
-    } else if (e.touches.length === 2) {
-      const dx = e.touches[0].clientX - e.touches[1].clientX;
-      const dy = e.touches[0].clientY - e.touches[1].clientY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      const scaleFactor = dist / touchStartDist;
-      if (mode === "text") {
-        textScale = touchStartScale * scaleFactor;
-        textScale = Math.min(Math.max(0.5, textScale), 3);
-      } else {
-        imgScale = touchStartScale * scaleFactor;
-        imgScale = Math.min(Math.max(0.5, imgScale), 5);
-      }
-      drawCanvas();
-    }
-  }, { passive: false });
+userImage.src=reader.result;
+};
 
-  canvas.addEventListener("touchend", e => {
-    e.preventDefault();
-    isDragging = false;
-    touchStartDist = 0;
-  }, { passive: false });
+reader.readAsDataURL(e.target.files[0]);
+};
 
-  editPhotoBtn.onclick = () => {
-    mode = mode === "photo" ? "text" : "photo";
-    editPhotoBtn.textContent = mode === "photo" ? "🔄 Двигать фото" : "📝 Двигать текст";
-  };
+/* Draw */
 
-  function downloadImage() {
-    const dataURL = canvas.toDataURL("image/png", 1.0);
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.openLink(dataURL, { try_instant_view: false });
-    } else {
-      const link = document.createElement("a");
-      link.download = "privet-avatar.png";
-      link.href = dataURL;
-      link.click();
-    }
-  }
+function drawCanvas(){
 
-  drawCanvas();
+ctx.clearRect(0,0,1080,1080);
+
+ctx.fillStyle="#111";
+ctx.fillRect(0,0,1080,1080);
+
+if(userImage.src){
+ctx.drawImage(
+userImage,
+imgX,imgY,
+userImage.width*imgScale,
+userImage.height*imgScale
+);
+}
+
+ctx.save();
+
+ctx.textAlign="center";
+ctx.font=`bold ${120*textScale}px ${selectedFont}`;
+
+ctx.fillStyle="white";
+ctx.shadowColor="white";
+ctx.shadowBlur=30;
+ctx.fillText("КОД",textX,textY-120*textScale);
+
+/* PRIVET COLOR FIX */
+ctx.fillStyle=selectedColor||"white";
+ctx.shadowColor=selectedColor||"white";
+ctx.shadowBlur=35;
+ctx.fillText("PRIVET",textX,textY);
+
+ctx.shadowBlur=0;
+ctx.restore();
+}
+
+function setColor(c){
+selectedColor=c;
+drawCanvas();
+}
+window.setColor=setColor;
+
+/* Drag */
+
+let isDragging=false;
+let lastX=0,lastY=0;
+
+canvas.addEventListener("mousedown",e=>{
+isDragging=true;
+lastX=e.offsetX;
+lastY=e.offsetY;
+});
+
+canvas.addEventListener("mousemove",e=>{
+if(!isDragging)return;
+
+let dx=(e.offsetX-lastX)*(1080/canvas.clientWidth);
+let dy=(e.offsetY-lastY)*(1080/canvas.clientHeight);
+
+if(mode==="text"){
+textX+=dx;textY+=dy;
+}else{
+imgX+=dx;imgY+=dy;
+}
+
+lastX=e.offsetX;
+lastY=e.offsetY;
+
+drawCanvas();
+});
+
+canvas.addEventListener("mouseup",()=>isDragging=false);
+canvas.addEventListener("mouseleave",()=>isDragging=false);
+
+/* Zoom */
+
+canvas.addEventListener("wheel",e=>{
+e.preventDefault();
+
+const scaleFactor=e.deltaY*-0.001;
+
+if(mode==="text"){
+textScale=Math.min(Math.max(0.5,textScale+scaleFactor),3);
+}else{
+imgScale=Math.min(Math.max(0.5,imgScale+scaleFactor),5);
+}
+
+drawCanvas();
+});
+
+/* Touch gestures */
+
+let touchStartDist=0;
+let touchStartScale=1;
+
+canvas.addEventListener("touchstart",e=>{
+if(e.touches.length===1){
+isDragging=true;
+
+const rect=canvas.getBoundingClientRect();
+
+lastX=e.touches[0].clientX-rect.left;
+lastY=e.touches[0].clientY-rect.top;
+}
+
+if(e.touches.length===2){
+const dx=e.touches[0].clientX-e.touches[1].clientX;
+const dy=e.touches[0].clientY-e.touches[1].clientY;
+
+touchStartDist=Math.sqrt(dx*dx+dy*dy);
+touchStartScale=(mode==="text"?textScale:imgScale);
+}
+},{passive:false});
+
+canvas.addEventListener("touchmove",e=>{
+e.preventDefault();
+
+if(e.touches.length===1 && isDragging){
+
+const rect=canvas.getBoundingClientRect();
+
+let x=e.touches[0].clientX-rect.left;
+let y=e.touches[0].clientY-rect.top;
+
+let dx=(x-lastX)*(1080/canvas.clientWidth);
+let dy=(y-lastY)*(1080/canvas.clientHeight);
+
+if(mode==="text"){
+textX+=dx;textY+=dy;
+}else{
+imgX+=dx;imgY+=dy;
+}
+
+lastX=x;
+lastY=y;
+
+drawCanvas();
+}
+
+else if(e.touches.length===2){
+
+const dx=e.touches[0].clientX-e.touches[1].clientX;
+const dy=e.touches[0].clientY-e.touches[1].clientY;
+
+const dist=Math.sqrt(dx*dx+dy*dy);
+const factor=dist/touchStartDist;
+
+if(mode==="text"){
+textScale=Math.min(Math.max(0.5,touchStartScale*factor),3);
+}else{
+imgScale=Math.min(Math.max(0.5,touchStartScale*factor),5);
+}
+
+drawCanvas();
+}
+},{passive:false});
+
+canvas.addEventListener("touchend",()=>isDragging=false);
+
+/* Mode switch */
+
+editPhotoBtn.onclick=()=>{
+mode=mode==="photo"?"text":"photo";
+editPhotoBtn.textContent=
+mode==="photo"?"🔄 Двигать фото":"✂ Изменить обрезку";
+};
+
+/* Save PNG Telegram Safe */
+
+function downloadImage(){
+
+canvas.toBlob(blob=>{
+
+const url=URL.createObjectURL(blob);
+
+if(window.Telegram?.WebApp){
+window.Telegram.WebApp.openLink(url);
+}else{
+const a=document.createElement("a");
+a.href=url;
+a.download="privet-avatar.png";
+a.click();
+}
+
+setTimeout(()=>URL.revokeObjectURL(url),5000);
+
+},"image/png");
+
+}
+window.downloadImage=downloadImage;
+
+drawCanvas();
+
 });
 </script>
+
 </body>
 </html>
