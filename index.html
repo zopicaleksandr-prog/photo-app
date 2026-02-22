@@ -1,5 +1,62 @@
 <!DOCTYPE html>
 <html lang="ru">
+<style>
+@font-face{
+font-family:"Bebas Neue";
+src:local("Bebas Neue");
+font-display:block;
+}
+@font-face{
+font-family:"Anton";
+src:local("Anton");
+font-display:block;
+}
+@font-face{
+font-family:"Oswald";
+src:local("Oswald");
+font-display:block;
+}
+@font-face{
+font-family:"Rubik Mono One";
+src:local("Rubik Mono One");
+font-display:block;
+}
+@font-face{
+font-family:"Orbitron";
+src:local("Orbitron");
+font-display:block;
+}
+@font-face{
+font-family:"Russo One";
+src:local("Russo One");
+font-display:block;
+}
+@font-face{
+font-family:"Exo 2";
+src:local("Exo 2");
+font-display:block;
+}
+@font-face{
+font-family:"Teko";
+src:local("Teko");
+font-display:block;
+}
+@font-face{
+font-family:"Montserrat";
+src:local("Montserrat");
+font-display:block;
+}
+@font-face{
+font-family:"Rajdhani";
+src:local("Rajdhani");
+font-display:block;
+}
+@font-face{
+font-family:"Play";
+src:local("Play");
+font-display:block;
+}
+</style>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
@@ -7,7 +64,16 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Oswald&family=Rubik+Mono+One&family=Orbitron:wght@700&family=Russo+One&family=Exo+2:wght@800&family=Teko:wght@700&family=Montserrat:wght@900&family=Rajdhani:wght@700&family=Play:wght@700&display=swap" rel="stylesheet">
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script const tg = window.Telegram?.WebApp;
+
+if(tg){
+tg.ready();
+tg.expand();
+
+if(tg.isVersionAtLeast?.("8.0")){
+tg.requestFullscreen?.().catch(()=>{});
+}
+} src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 :root{
