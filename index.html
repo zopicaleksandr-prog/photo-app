@@ -2,12 +2,14 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-<title>PRIVET Avatar Editor</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Oswald&family=Rubik+Mono+One&family=Orbitron:wght@700&family=Russo+One&family=Exo+2:wght@800&family=Teko:wght@700&family=Montserrat:wght@900&family=Rajdhani:wght@700&family=Play:wght@700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<!-- Официальный Telegram Web App SDK -->
+<title>PRIVET Avatar Editor</title>
+
+<!-- Telegram WebApp SDK -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Oswald&family=Rubik+Mono+One&family=Orbitron:wght@700&family=Russo+One&family=Exo+2:wght@800&family=Teko:wght@700&family=Montserrat:wght@900&family=Rajdhani:wght@700&family=Play:wght@700&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -18,20 +20,52 @@
 --text:#e8f1ff;
 }
 *{box-sizing:border-box}
-body{
+html,body{
 margin:0;
-font-family:Arial,sans-serif;
+padding:0;
+height:100%;
 background:linear-gradient(180deg,var(--bg1),var(--bg2));
 color:var(--text);
+font-family:Arial,sans-serif;
 overflow:hidden;
 }
-.app{padding:15px;height:100vh;display:flex;flex-direction:column;}
-.header{text-align:center;font-size:24px;margin-bottom:10px;}
-.layout{display:grid;grid-template-columns:1fr 1fr;gap:15px;flex:1;}
-.card{background:var(--card);border-radius:14px;padding:15px;overflow:auto;}
-.preview-box{width:100%;aspect-ratio:1/1;background:#222;border-radius:12px;overflow:hidden;}
+.app{
+height:100vh;
+padding:15px;
+display:flex;
+flex-direction:column;
+}
+.header{text-align:center;font-size:22px;margin-bottom:10px;}
+.layout{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+flex:1;
+}
+.card{
+background:var(--card);
+border-radius:14px;
+padding:15px;
+overflow:auto;
+}
+.preview-box{
+width:100%;
+aspect-ratio:1/1;
+background:#111;
+border-radius:12px;
+overflow:hidden;
+}
 canvas{width:100%;height:100%;display:block;}
-button{padding:10px;border-radius:8px;background:var(--accent);border:none;color:white;cursor:pointer;margin-bottom:10px;width:100%;}
+button{
+padding:10px;
+border-radius:8px;
+background:var(--accent);
+border:none;
+color:white;
+cursor:pointer;
+margin-bottom:10px;
+width:100%;
+}
 .section-title{margin:15px 0 10px;opacity:.8;}
 .color-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
 .color-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;background:#0e1b2a;cursor:pointer;}
@@ -39,15 +73,19 @@ button{padding:10px;border-radius:8px;background:var(--accent);border:none;color
 .design-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
 .design-item{background:#0b1624;padding:10px;border-radius:10px;text-align:center;cursor:pointer;border:2px solid transparent;}
 .design-item.active{border:2px solid var(--accent);}
-@media(max-width:900px){.layout{grid-template-columns:1fr;}}
+@media(max-width:900px){
+.layout{grid-template-columns:1fr;}
+}
 </style>
 </head>
 
 <body>
+
 <div class="app">
 <div class="header">🎨 PRIVET Avatar Editor</div>
 
 <div class="layout">
+
 <div class="card">
 <input type="file" id="upload" hidden>
 <button onclick="upload.click()">📷 Загрузить фото</button>
@@ -72,11 +110,27 @@ button{padding:10px;border-radius:8px;background:var(--accent);border:none;color
 
 <div class="section-title">Выбери шрифт</div>
 <div class="design-grid" id="fonts"></div>
+
 </div>
 </div>
 </div>
 
 <script>
+/* ===== TELEGRAM FULLSCREEN INIT ===== */
+const tg = window.Telegram?.WebApp;
+
+if (tg) {
+  tg.ready();
+  tg.expand();
+
+  if (tg.isVersionAtLeast("8.0")) {
+    tg.requestFullscreen().catch(()=>{});
+  }
+
+  document.body.style.background = tg.themeParams.bg_color || "#0f1c2b";
+}
+
+/* ===== CANVAS LOGIC ===== */
 const canvas=document.getElementById("canvas");
 const ctx=canvas.getContext("2d");
 const upload=document.getElementById("upload");
@@ -86,7 +140,6 @@ const modeBtn=document.getElementById("modeBtn");
 let userImage=new Image();
 let selectedColor="white";
 let selectedFont="Bebas Neue";
-
 let mode="text";
 
 let textX=540,textY=1000,textScale=1;
@@ -112,6 +165,7 @@ ctx.fillText("КОД",textX,textY-140*textScale);
 ctx.fillStyle=selectedColor;
 ctx.shadowColor=selectedColor;
 ctx.fillText("PRIVET",textX,textY);
+
 ctx.shadowBlur=0;
 }
 
@@ -161,6 +215,7 @@ drawCanvas();
 };
 
 let startDist=0,startScale=1;
+
 canvas.addEventListener("touchstart",e=>{
 if(e.touches.length===1){
 dragging=true;
@@ -207,14 +262,30 @@ mode=mode==="text"?"photo":"text";
 modeBtn.textContent=mode==="text"?"🔤 Редактировать текст":"🖼 Редактировать фото";
 };
 
+/* ===== TELEGRAM SAVE ===== */
 function downloadImage(){
-const link=document.createElement("a");
-link.download="privet-avatar.png";
-link.href=canvas.toDataURL("image/png");
-link.click();
+
+canvas.toBlob((blob)=>{
+
+const url=URL.createObjectURL(blob);
+
+if(tg){
+tg.openLink(url,{try_instant_view:false});
+}else{
+const a=document.createElement("a");
+a.href=url;
+a.download="privet-avatar.png";
+a.click();
+}
+
+setTimeout(()=>URL.revokeObjectURL(url),5000);
+
+},"image/png");
+
 }
 window.downloadImage=downloadImage;
 
+/* ===== FONTS ===== */
 const fonts=['Bebas Neue','Anton','Oswald','Rubik Mono One','Orbitron','Russo One','Exo 2','Teko','Montserrat','Rajdhani','Play'];
 
 fonts.forEach((font,i)=>{
@@ -236,5 +307,3 @@ drawCanvas();
 
 </body>
 </html>
-
-
