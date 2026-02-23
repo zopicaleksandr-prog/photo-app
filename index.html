@@ -7,158 +7,135 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Oswald&family=Rubik+Mono+One&family=Orbitron:wght@700&family=Russo+One&family=Exo+2:wght@800&family=Teko:wght@700&family=Montserrat:wght@900&family=Rajdhani:wght@700&family=Play:wght@700&display=swap" rel="stylesheet">
 
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 <style>
 :root{
-    --bg1:#0f1c2b;
-    --bg2:#07131f;
-    --card:#162536;
-    --accent:#2ea6d6;
-    --text:#e8f1ff;
+--bg1:#0f1c2b;
+--bg2:#07131f;
+--card:#162536;
+--accent:#2ea6d6;
+--text:#e8f1ff;
 }
 
 *{box-sizing:border-box}
 
 html,body{
-    margin:0;
-    height:100%;
-    font-family:Inter,Arial,sans-serif;
-    background:linear-gradient(180deg,var(--bg1),var(--bg2));
-    color:var(--text);
-    overflow:hidden;
+margin:0;
+height:100%;
+font-family:Inter,Arial,sans-serif;
+background:linear-gradient(180deg,var(--bg1),var(--bg2));
+color:var(--text);
+overflow:hidden;
 }
 
 .app{
-    height:100vh;
-    width:100vw;
-    padding:20px;
+height:100vh;
+width:100vw;
+padding:20px;
 }
 
 .header{
-    text-align:center;
-    font-size:26px;
-    font-weight:600;
-    margin-bottom:15px;
+text-align:center;
+font-size:26px;
+font-weight:600;
+margin-bottom:15px;
 }
 
 .layout{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
-    height:calc(100% - 60px);
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+height:calc(100% - 60px);
 }
 
 .card{
-    background:var(--card);
-    border-radius:14px;
-    padding:20px;
-    display:flex;
-    flex-direction:column;
-    overflow:auto;
+background:var(--card);
+border-radius:14px;
+padding:20px;
+display:flex;
+flex-direction:column;
+overflow:auto;
 }
 
+/* Стабильный квадрат из старой версии */
 .preview-box{
-    position:relative;
-    width:100%;
-    aspect-ratio:1/1; /* квадрат */
-    background:#111;
-    border-radius:12px;
-    overflow:hidden;
-    touch-action:none;
+position:relative;
+width:100%;
+aspect-ratio:1/1;
+background:#111;
+border-radius:12px;
+overflow:hidden;
 }
 
-.preview-box img{
-    width:100%;
-    height:100%;
-    object-fit:cover; /* фото заполняет квадрат */
-    position:absolute;
-    top:0;
-    left:0;
-    transform-origin:center;
-    user-select:none;
-}
-
-#overlayText{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    font-size:60px;
-    font-family:'Bebas Neue';
-    cursor:grab;
-    text-align:center;
-    text-shadow:0 0 20px rgba(255,255,255,0.8);
-}
-
-#overlayText span{
-    display:block; /* PRIVET на новой строке */
+canvas{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
 }
 
 button{
-    padding:12px;
-    border-radius:10px;
-    background:var(--accent);
-    border:none;
-    color:white;
-    cursor:pointer;
-    margin-bottom:10px;
+padding:12px;
+border-radius:10px;
+background:var(--accent);
+border:none;
+color:white;
+cursor:pointer;
+margin-bottom:10px;
 }
 
 .section-title{
-    margin:15px 0 10px;
-    opacity:.8;
+margin:15px 0 10px;
+opacity:.8;
 }
 
 .color-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
 }
 
 .color-item{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:8px;
-    border-radius:8px;
-    background:#0e1b2a;
-    cursor:pointer;
+display:flex;
+align-items:center;
+gap:8px;
+padding:8px;
+border-radius:8px;
+background:#0e1b2a;
+cursor:pointer;
 }
 
 .color-dot{
-    width:14px;
-    height:14px;
-    border-radius:50%;
+width:14px;
+height:14px;
+border-radius:50%;
 }
 
 .design-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:10px;
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
 }
 
 .design-item{
-    background:#0b1624;
-    padding:10px;
-    border-radius:10px;
-    text-align:center;
-    cursor:pointer;
-    border:2px solid transparent;
+background:#0b1624;
+padding:10px;
+border-radius:10px;
+text-align:center;
+cursor:pointer;
+border:2px solid transparent;
 }
 
 .design-item.active{
-    border:2px solid var(--accent);
-}
-
-.info{
-    margin-top:15px;
-    font-size:13px;
-    opacity:.7;
+border:2px solid var(--accent);
 }
 
 @media(max-width:900px){
-    .layout{
-        grid-template-columns:1fr;
-    }
+.layout{
+grid-template-columns:1fr;
+}
 }
 </style>
 </head>
@@ -166,7 +143,6 @@ button{
 <body>
 
 <div class="app">
-
 <div class="header">🎨 PRIVET Avatar Editor</div>
 
 <div class="layout">
@@ -175,14 +151,10 @@ button{
 
 <input type="file" id="upload" hidden>
 <button onclick="upload.click()">📷 Загрузить фото</button>
-<button id="editBtn">✂ Изменить обрезку</button>
 <button onclick="saveImage()">💾 Сохранить PNG</button>
 
-<div class="preview-box" id="preview">
-    <img id="photo">
-    <div id="overlayText">
-        КОД <span id="privetWord">PRIVET</span>
-    </div>
+<div class="preview-box">
+<canvas id="canvas" width="1000" height="1000"></canvas>
 </div>
 
 </div>
@@ -191,256 +163,102 @@ button{
 
 <div class="section-title">Цвет PRIVET</div>
 <div class="color-grid">
-
-<div class="color-item" onclick="setColor('white')">
-<div class="color-dot" style="background:white"></div>Белый
-</div>
-
-<div class="color-item" onclick="setColor('red')">
-<div class="color-dot" style="background:red"></div>Красный
-</div>
-
-<div class="color-item" onclick="setColor('blue')">
-<div class="color-dot" style="background:blue"></div>Синий
-</div>
-
-<div class="color-item" onclick="setColor('green')">
-<div class="color-dot" style="background:green"></div>Зелёный
-</div>
-
-<div class="color-item" onclick="setColor('yellow')">
-<div class="color-dot" style="background:gold"></div>Жёлтый
-</div>
-
-<div class="color-item" onclick="setColor('purple')">
-<div class="color-dot" style="background:purple"></div>Фиолетовый
-</div>
-
+<div class="color-item" onclick="setColor('white')"><div class="color-dot" style="background:white"></div>Белый</div>
+<div class="color-item" onclick="setColor('red')"><div class="color-dot" style="background:red"></div>Красный</div>
+<div class="color-item" onclick="setColor('blue')"><div class="color-dot" style="background:blue"></div>Синий</div>
+<div class="color-item" onclick="setColor('green')"><div class="color-dot" style="background:green"></div>Зелёный</div>
+<div class="color-item" onclick="setColor('gold')"><div class="color-dot" style="background:gold"></div>Жёлтый</div>
+<div class="color-item" onclick="setColor('purple')"><div class="color-dot" style="background:purple"></div>Фиолетовый</div>
 </div>
 
 <div class="section-title">Выбери шрифт</div>
-
 <div class="design-grid" id="fonts"></div>
-
-<div class="info">
-Управление наложением:<br>
-• 1 палец - перемещение<br>
-• 2 пальца - масштаб и поворот<br>
-• Колесо мыши - масштаб (на ПК)
-</div>
 
 </div>
 </div>
 </div>
 
 <script>
+const tg = window.Telegram?.WebApp;
+if(tg){
+tg.ready();
+tg.expand();
+}
+
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+const upload=document.getElementById("upload");
+const fontsContainer=document.getElementById("fonts");
+
+let image=new Image();
+let selectedFont="Bebas Neue";
+let selectedColor="white";
+
 const fonts=[
-'Bebas Neue','Anton','Oswald','Rubik Mono One','Orbitron',
-'Russo One','Exo 2','Teko','Montserrat','Rajdhani','Play'
+'Bebas Neue','Anton','Oswald','Rubik Mono One',
+'Orbitron','Russo One','Exo 2','Teko',
+'Montserrat','Rajdhani','Play'
 ];
 
-const fontsContainer=document.getElementById("fonts");
-const text=document.getElementById("overlayText");
-const privet=document.getElementById("privetWord");
-const photo=document.getElementById("photo");
-const preview=document.getElementById("preview");
-const upload=document.getElementById("upload");
-const editBtn=document.getElementById("editBtn");
-
-/* ===== MODEL STATE ===== */
-let photoX=0, photoY=0, photoScale=1;
-let textX=0, textY=0, textScale=1;
-
-let isEditing=false;
-
-/* ===== FONT SELECTOR ===== */
 fonts.forEach((font,i)=>{
-    const div=document.createElement("div");
-    div.className="design-item"+(i==0?" active":"");
-    div.style.fontFamily=font;
-    div.innerText="КОД PRIVET";
+const div=document.createElement("div");
+div.className="design-item"+(i===0?" active":"");
+div.style.fontFamily=font;
+div.innerText="КОД PRIVET";
 
-    div.onclick=()=>{
-        document.querySelectorAll(".design-item")
-        .forEach(d=>d.classList.remove("active"));
+div.onclick=()=>{
+document.querySelectorAll(".design-item")
+.forEach(d=>d.classList.remove("active"));
+div.classList.add("active");
+selectedFont=font;
+draw();
+};
 
-        div.classList.add("active");
-        text.style.fontFamily=font;
-    };
-
-    fontsContainer.appendChild(div);
+fontsContainer.appendChild(div);
 });
 
-/* ===== UPLOAD PHOTO ===== */
 upload.onchange=e=>{
-    const reader=new FileReader();
-    reader.onload=()=>{
-        photo.src=reader.result;
-        resetPhotoTransform();
-    };
-    reader.readAsDataURL(e.target.files[0]);
+const reader=new FileReader();
+reader.onload=()=>{
+image=new Image();
+image.onload=draw;
+image.src=reader.result;
+};
+reader.readAsDataURL(e.target.files[0]);
 };
 
-function resetPhotoTransform(){
-    photoX=0;
-    photoY=0;
-    photoScale=1;
-    updatePhotoTransform();
+function setColor(c){
+selectedColor=c;
+draw();
 }
 
-/* ===== COLOR ===== */
-function setColor(color){
-    privet.style.color=color;
-    privet.style.textShadow=`0 0 20px ${color}`;
+function draw(){
+ctx.clearRect(0,0,1000,1000);
+ctx.fillStyle="#111";
+ctx.fillRect(0,0,1000,1000);
+
+if(image.src){
+ctx.drawImage(image,0,0,1000,1000);
 }
 
-/* ===== TEXT MOVE ===== */
-let startX,startY;
+ctx.textAlign="center";
+ctx.font="bold 100px "+selectedFont;
 
-text.addEventListener("pointerdown",e=>{
-    startX=e.clientX;
-    startY=e.clientY;
-    text.setPointerCapture(e.pointerId);
-});
+ctx.fillStyle="white";
+ctx.fillText("КОД",500,450);
 
-text.addEventListener("pointermove",e=>{
-    if(startX==null) return;
-
-    textX+=e.clientX-startX;
-    textY+=e.clientY-startY;
-
-    startX=e.clientX;
-    startY=e.clientY;
-
-    updateTextTransform();
-});
-
-text.addEventListener("pointerup",()=>startX=null);
-
-/* TEXT ZOOM */
-preview.addEventListener("wheel",e=>{
-    if(isEditing) return;
-
-    e.preventDefault();
-
-    textScale+=e.deltaY*-0.001;
-    textScale=Math.min(Math.max(.5,textScale),3);
-
-    updateTextTransform();
-});
-
-/* ===== PHOTO EDIT ===== */
-editBtn.onclick=()=>{
-    isEditing=!isEditing;
-
-    editBtn.textContent=isEditing?
-        "🔄 Двигать и масштабировать":"✂ Изменить обрезку";
-
-    photo.style.cursor=isEditing?"grab":"default";
-};
-
-/* PHOTO MOVE */
-let pStartX,pStartY;
-
-photo.addEventListener("pointerdown",e=>{
-    if(!isEditing) return;
-
-    pStartX=e.clientX;
-    pStartY=e.clientY;
-
-    photo.setPointerCapture(e.pointerId);
-});
-
-photo.addEventListener("pointermove",e=>{
-    if(!isEditing || pStartX==null) return;
-
-    photoX+=e.clientX-pStartX;
-    photoY+=e.clientY-pStartY;
-
-    pStartX=e.clientX;
-    pStartY=e.clientY;
-
-    updatePhotoTransform();
-});
-
-photo.addEventListener("pointerup",()=>pStartX=null);
-
-/* PHOTO ZOOM */
-preview.addEventListener("wheel",e=>{
-    if(!isEditing) return;
-
-    e.preventDefault();
-
-    photoScale+=e.deltaY*-0.0015;
-    photoScale=Math.min(Math.max(0.1,photoScale),5);
-
-    updatePhotoTransform();
-});
-
-function updatePhotoTransform(){
-    photo.style.transform=
-    `translate(${photoX}px,${photoY}px) scale(${photoScale})`;
+ctx.fillStyle=selectedColor;
+ctx.fillText("PRIVET",500,550);
 }
 
-function updateTextTransform(){
-    text.style.transform=
-    `translate(${textX}px,${textY}px) scale(${textScale})`;
-}
-
-/* ===== SAVE IMAGE ===== */
 function saveImage(){
-
-    const SIZE=1000;
-    const canvas=document.createElement("canvas");
-    canvas.width=SIZE;
-    canvas.height=SIZE;
-
-    const ctx=canvas.getContext("2d");
-
-    /* background */
-    ctx.fillStyle="#111";
-    ctx.fillRect(0,0,SIZE,SIZE);
-
-    /* draw photo */
-    if(photo.src){
-
-        const img=new Image();
-        img.src=photo.src;
-
-        const previewRect=preview.getBoundingClientRect();
-        const scaleFactor=SIZE/previewRect.width;
-
-        const w=img.width*photoScale*scaleFactor;
-        const h=img.height*photoScale*scaleFactor;
-
-        const px=SIZE/2 - w/2 + photoX*scaleFactor;
-        const py=SIZE/2 - h/2 + photoY*scaleFactor;
-
-        ctx.drawImage(img,px,py,w,h);
-    }
-
-    /* draw text */
-    ctx.save();
-
-    const font=text.style.fontFamily || "Bebas Neue";
-    const color=privet.style.color || "white";
-
-    ctx.font="100px "+font;
-    ctx.textAlign="center";
-    ctx.fillStyle=color;
-    ctx.shadowColor=color;
-    ctx.shadowBlur=20;
-
-    ctx.fillText("КОД",SIZE/2 + textX,SIZE/2 - 40 + textY);
-    ctx.fillText("PRIVET",SIZE/2 + textX,SIZE/2 + 40 + textY);
-
-    ctx.restore();
-
-    const link=document.createElement("a");
-    link.download="privet-avatar.png";
-    link.href=canvas.toDataURL("image/png");
-    link.click();
+const link=document.createElement("a");
+link.download="privet-avatar.png";
+link.href=canvas.toDataURL("image/png");
+link.click();
 }
+
+draw();
 </script>
 
 </body>
