@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>PRIVET Avatar Editor</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Oswald&family=Rubik+Mono+One&family=Orbitron:wght@700&family=Russo+One&family=Exo+2:wght@800&family=Teko:wght@700&family=Montserrat:wght@900&family=Rajdhani:wght@700&family=Play:wght@700&display=swap" rel="stylesheet">
@@ -23,8 +23,8 @@
 html,body{
 margin:0;
 height:100%;
-font-family:Inter,Arial,sans-serif;
 background:linear-gradient(180deg,var(--bg1),var(--bg2));
+font-family:Inter,Arial,sans-serif;
 color:var(--text);
 overflow:hidden;
 }
@@ -32,33 +32,34 @@ overflow:hidden;
 .app{
 height:100vh;
 width:100vw;
-padding:20px;
+padding:15px;
+display:flex;
+flex-direction:column;
 }
 
 .header{
 text-align:center;
-font-size:26px;
-font-weight:600;
-margin-bottom:15px;
+font-size:24px;
+margin-bottom:10px;
 }
 
 .layout{
+flex:1;
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:20px;
-height:calc(100% - 60px);
+gap:15px;
+overflow:hidden;
 }
 
 .card{
 background:var(--card);
 border-radius:14px;
-padding:20px;
+padding:15px;
 display:flex;
 flex-direction:column;
 overflow:auto;
 }
 
-/* Стабильный квадрат из старой версии */
 .preview-box{
 position:relative;
 width:100%;
@@ -66,6 +67,7 @@ aspect-ratio:1/1;
 background:#111;
 border-radius:12px;
 overflow:hidden;
+touch-action:none;
 }
 
 canvas{
@@ -133,9 +135,7 @@ border:2px solid var(--accent);
 }
 
 @media(max-width:900px){
-.layout{
-grid-template-columns:1fr;
-}
+.layout{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -148,19 +148,17 @@ grid-template-columns:1fr;
 <div class="layout">
 
 <div class="card">
-
 <input type="file" id="upload" hidden>
 <button onclick="upload.click()">📷 Загрузить фото</button>
-<button onclick="saveImage()">💾 Сохранить PNG</button>
+<button id="modeBtn">✂ Редактировать фото</button>
+<button onclick="downloadImage()">💾 Сохранить PNG</button>
 
 <div class="preview-box">
 <canvas id="canvas" width="1000" height="1000"></canvas>
 </div>
-
 </div>
 
 <div class="card">
-
 <div class="section-title">Цвет PRIVET</div>
 <div class="color-grid">
 <div class="color-item" onclick="setColor('white')"><div class="color-dot" style="background:white"></div>Белый</div>
@@ -173,8 +171,8 @@ grid-template-columns:1fr;
 
 <div class="section-title">Выбери шрифт</div>
 <div class="design-grid" id="fonts"></div>
-
 </div>
+
 </div>
 </div>
 
@@ -183,14 +181,23 @@ const tg = window.Telegram?.WebApp;
 if(tg){
 tg.ready();
 tg.expand();
+setTimeout(()=>tg.expand(),150);
 }
 
 const canvas=document.getElementById("canvas");
 const ctx=canvas.getContext("2d");
 const upload=document.getElementById("upload");
 const fontsContainer=document.getElementById("fonts");
+const modeBtn=document.getElementById("modeBtn");
 
 let image=new Image();
+image.crossOrigin="anonymous";
+
+let mode="text";
+
+let imgX=0,imgY=0,imgScale=1;
+let textX=0,textY=0,textScale=1;
+
 let selectedFont="Bebas Neue";
 let selectedColor="white";
 
@@ -205,7 +212,6 @@ const div=document.createElement("div");
 div.className="design-item"+(i===0?" active":"");
 div.style.fontFamily=font;
 div.innerText="КОД PRIVET";
-
 div.onclick=()=>{
 document.querySelectorAll(".design-item")
 .forEach(d=>d.classList.remove("active"));
@@ -213,7 +219,6 @@ div.classList.add("active");
 selectedFont=font;
 draw();
 };
-
 fontsContainer.appendChild(div);
 });
 
@@ -221,11 +226,30 @@ upload.onchange=e=>{
 const reader=new FileReader();
 reader.onload=()=>{
 image=new Image();
+image.crossOrigin="anonymous";
 image.onload=draw;
 image.src=reader.result;
 };
 reader.readAsDataURL(e.target.files[0]);
 };
+
+modeBtn.onclick=()=>{
+mode=mode==="text"?"photo":"text";
+modeBtn.textContent=mode==="photo"?
+"🔄 Редактировать текст":"✂ Редактировать фото";
+};
+
+canvas.addEventListener("wheel",e=>{
+e.preventDefault();
+const delta=e.deltaY*-0.001;
+
+if(mode==="photo"){
+imgScale=Math.min(Math.max(.1,imgScale+delta),5);
+}else{
+textScale=Math.min(Math.max(.5,textScale+delta),3);
+}
+draw();
+});
 
 function setColor(c){
 selectedColor=c;
@@ -238,24 +262,46 @@ ctx.fillStyle="#111";
 ctx.fillRect(0,0,1000,1000);
 
 if(image.src){
-ctx.drawImage(image,0,0,1000,1000);
+const w=image.width*imgScale;
+const h=image.height*imgScale;
+ctx.drawImage(image,500-w/2+imgX,500-h/2+imgY,w,h);
 }
 
 ctx.textAlign="center";
-ctx.font="bold 100px "+selectedFont;
+ctx.font="bold "+(100*textScale)+"px "+selectedFont;
 
 ctx.fillStyle="white";
-ctx.fillText("КОД",500,450);
+ctx.fillText("КОД",500+textX,450+textY);
 
 ctx.fillStyle=selectedColor;
-ctx.fillText("PRIVET",500,550);
+ctx.fillText("PRIVET",500+textX,550+textY);
 }
 
-function saveImage(){
-const link=document.createElement("a");
-link.download="privet-avatar.png";
-link.href=canvas.toDataURL("image/png");
-link.click();
+async function uploadToCloudinary(){
+const imageData=canvas.toDataURL("image/png");
+
+const formData=new FormData();
+formData.append("file",imageData);
+formData.append("upload_preset","privet");
+
+const response=await fetch(
+"https://api.cloudinary.com/v1_1/ddku1jwj7/image/upload",
+{method:"POST",body:formData}
+);
+
+const data=await response.json();
+
+if(data.secure_url){
+if(tg){
+tg.openLink(data.secure_url);
+}else{
+window.open(data.secure_url,"_blank");
+}
+}
+}
+
+function downloadImage(){
+uploadToCloudinary();
 }
 
 draw();
