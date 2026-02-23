@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>PRIVET Avatar Editor</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Oswald&family=Rubik+Mono+One&family=Orbitron:wght@700&family=Russo+One&family=Exo+2:wght@800&family=Teko:wght@700&family=Montserrat:wght@900&family=Rajdhani:wght@700&family=Play:wght@700&display=swap" rel="stylesheet">
@@ -21,6 +21,11 @@
 *{box-sizing:border-box}
 
 html,body{
+width: 100%;
+ height: 100%;
+margin: 0;
+padding: 0;
+overflow: hidden;
 margin:0;
 height:100%;
 background:linear-gradient(180deg,var(--bg1),var(--bg2));
@@ -181,6 +186,9 @@ const tg = window.Telegram?.WebApp;
 if(tg){
 tg.ready();
 tg.expand();
+if (tg.requestFullscreen) {
+    tg.requestFullscreen();
+}
 setTimeout(()=>tg.expand(),150);
 }
 
@@ -309,3 +317,4 @@ draw();
 
 </body>
 </html>
+
