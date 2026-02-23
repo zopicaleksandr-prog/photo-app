@@ -246,7 +246,11 @@ document.querySelectorAll(".design-item")
 
 div.classList.add("active");
 selectedFont=font;
+if(document.fonts){
+document.fonts.ready.then(drawCanvas);
+}else{
 drawCanvas();
+}
 };
 
 fontsContainer.appendChild(div);
