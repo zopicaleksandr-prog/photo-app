@@ -65,7 +65,7 @@ overflow:auto;
 .preview-box{
 position:relative;
 width:100%;
-aspect-ratio:1/1;
+aspect-ratio:1/1; /* блок квадратный */
 background:#111;
 border-radius:12px;
 overflow:hidden;
@@ -78,6 +78,7 @@ top:0;
 left:0;
 width:100%;
 height:100%;
+object-fit:cover; /* заполнение блока без искажений */
 }
 
 button{
@@ -164,12 +165,13 @@ opacity:0.7;
 <div class="preview-box">
 <canvas id="canvas" width="1000" height="1000"></canvas>
 <div class="instructions">
+1 палец: движение, 2 пальца: масштаб, колесико мыши: масштаб/движение
 </div>
 </div>
 </div>
 
 <div class="card">
-<div class="section-title">Цвет текста</div>
+<div class="section-title">Цвет PRIVET</div>
 <div class="color-grid">
 <div class="color-item" onclick="setColor('white')"><div class="color-dot" style="background:white"></div>Белый</div>
 <div class="color-item" onclick="setColor('red')"><div class="color-dot" style="background:red"></div>Красный</div>
@@ -180,12 +182,6 @@ opacity:0.7;
 </div>
 
 <div class="section-title">Выбери шрифт</div>
-<div class="info">
-Управление наложением:<br>
-• 1 палец - перемещение<br>
-• 2 пальца - масштаб и поворот<br>
-• Колесо мыши - масштаб (на ПК)
-</div>
 <div class="design-grid" id="fonts"></div>
 </div>
 
@@ -333,7 +329,7 @@ canvas.addEventListener("touchend", e=>{
 
 function setColor(c){selectedColor=c; draw();}
 
-// Многострочный текст с фиксированным lineHeight и свечением
+// Многострочный текст с свечением
 function drawTextMultiLine(text,x,y,lineHeight, glowColor){
     const words=text.split(" ");
     let line="";
@@ -350,7 +346,6 @@ function drawTextMultiLine(text,x,y,lineHeight, glowColor){
         } else {line=testLine;}
     }
     ctx.fillText(line,x,lineY);
-    // Сброс свечения после рисования
     ctx.shadowColor="transparent";
     ctx.shadowBlur=0;
 }
@@ -361,19 +356,19 @@ ctx.fillStyle="#111";
 ctx.fillRect(0,0,1000,1000);
 
 if(image.src){
-    const w=image.width*imgScale;
-    const h=image.height*imgScale;
-    ctx.drawImage(image,500-w/2+imgX,500-h/2+imgY,w,h);
+    const size = canvas.width;
+    const scale = imgScale * Math.min(size / image.width, size / image.height);
+    const w = image.width * scale;
+    const h = image.height * scale;
+    ctx.drawImage(image, size/2 - w/2 + imgX, size/2 - h/2 + imgY, w, h);
 }
 
 ctx.textAlign="center";
 ctx.font="bold "+(100*textScale)+"px "+selectedFont;
 
-// Свечение для первой строки
 ctx.fillStyle="white";
 drawTextMultiLine("КОД",500+textX,450+textY,100*textScale*1.1,"rgba(255,255,255,0.8)");
 
-// Свечение для второй строки
 ctx.fillStyle=selectedColor;
 drawTextMultiLine("PRIVET",500+textX,550+textY,100*textScale*1.1,"rgba(46,166,214,0.8)");
 }
@@ -402,5 +397,3 @@ draw();
 
 </body>
 </html>
-
-
