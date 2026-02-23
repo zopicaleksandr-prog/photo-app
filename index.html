@@ -247,10 +247,10 @@ modeBtn.textContent=mode==="photo"?
 "🔄 Редактировать текст":"✂ Редактировать фото";
 };
 
+// Масштабирование
 canvas.addEventListener("wheel",e=>{
 e.preventDefault();
 const delta=e.deltaY*-0.001;
-
 if(mode==="photo"){
 imgScale=Math.min(Math.max(.1,imgScale+delta),5);
 }else{
@@ -259,9 +259,70 @@ textScale=Math.min(Math.max(.5,textScale+delta),3);
 draw();
 });
 
-function setColor(c){
-selectedColor=c;
+// Движение фото и текста
+let isDragging=false;
+let startX=0,startY=0;
+
+canvas.addEventListener("mousedown", e=>{
+isDragging=true;
+startX=e.offsetX;
+startY=e.offsetY;
+});
+canvas.addEventListener("mousemove", e=>{
+if(!isDragging) return;
+const dx=e.offsetX - startX;
+const dy=e.offsetY - startY;
+startX=e.offsetX;
+startY=e.offsetY;
+if(mode==="photo"){imgX+=dx; imgY+=dy;} 
+else {textX+=dx; textY+=dy;}
 draw();
+});
+canvas.addEventListener("mouseup", e=>isDragging=false);
+canvas.addEventListener("mouseleave", e=>isDragging=false);
+
+// touch для мобильных
+canvas.addEventListener("touchstart", e=>{
+isDragging=true;
+const t=e.touches[0];
+const rect=canvas.getBoundingClientRect();
+startX=t.clientX - rect.left;
+startY=t.clientY - rect.top;
+});
+canvas.addEventListener("touchmove", e=>{
+if(!isDragging) return;
+e.preventDefault();
+const t=e.touches[0];
+const rect=canvas.getBoundingClientRect();
+const x=t.clientX - rect.left;
+const y=t.clientY - rect.top;
+const dx=x - startX;
+const dy=y - startY;
+startX=x;
+startY=y;
+if(mode==="photo"){imgX+=dx; imgY+=dy;} 
+else {textX+=dx; textY+=dy;}
+draw();
+},{passive:false});
+canvas.addEventListener("touchend", e=>isDragging=false);
+
+function setColor(c){selectedColor=c; draw();}
+
+// Многострочный текст, чтобы слова не наслаивались
+function drawTextMultiLine(text,x,y,lineHeight){
+    const words=text.split(" ");
+    let line="";
+    let lineY=y;
+    for(let n=0;n<words.length;n++){
+        const testLine=line+words[n]+" ";
+        const metrics=ctx.measureText(testLine);
+        if(metrics.width>800){ // макс ширина
+            ctx.fillText(line,x,lineY);
+            line=words[n]+" ";
+            lineY+=lineHeight;
+        } else {line=testLine;}
+    }
+    ctx.fillText(line,x,lineY);
 }
 
 function draw(){
@@ -269,52 +330,45 @@ ctx.clearRect(0,0,1000,1000);
 ctx.fillStyle="#111";
 ctx.fillRect(0,0,1000,1000);
 
+// Фото
 if(image.src){
 const w=image.width*imgScale;
 const h=image.height*imgScale;
 ctx.drawImage(image,500-w/2+imgX,500-h/2+imgY,w,h);
 }
 
+// Текст
 ctx.textAlign="center";
 ctx.font="bold "+(100*textScale)+"px "+selectedFont;
 
 ctx.fillStyle="white";
-ctx.fillText("КОД",500+textX,450+textY);
+drawTextMultiLine("КОД",500+textX,450+textY,100*textScale);
 
 ctx.fillStyle=selectedColor;
-ctx.fillText("PRIVET",500+textX,550+textY);
+drawTextMultiLine("PRIVET",500+textX,550+textY,100*textScale);
 }
 
+// Cloudinary
 async function uploadToCloudinary(){
 const imageData=canvas.toDataURL("image/png");
-
 const formData=new FormData();
 formData.append("file",imageData);
 formData.append("upload_preset","privet");
-
 const response=await fetch(
 "https://api.cloudinary.com/v1_1/ddku1jwj7/image/upload",
 {method:"POST",body:formData}
 );
-
 const data=await response.json();
-
 if(data.secure_url){
-if(tg){
-tg.openLink(data.secure_url);
-}else{
-window.open(data.secure_url,"_blank");
-}
+if(tg){tg.openLink(data.secure_url);}
+else{window.open(data.secure_url,"_blank");}
 }
 }
 
-function downloadImage(){
-uploadToCloudinary();
-}
+function downloadImage(){uploadToCloudinary();}
 
 draw();
 </script>
 
 </body>
 </html>
-
