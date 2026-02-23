@@ -1,187 +1,11 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>PRIVET Avatar Editor</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Oswald&family=Rubik+Mono+One&family=Orbitron:wght@700&family=Russo+One&family=Exo+2:wght@800&family=Teko:wght@700&family=Montserrat:wght@900&family=Rajdhani:wght@700&family=Play:wght@700&display=swap" rel="stylesheet">
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-<style>
-:root{
---bg1:#0f1c2b;
---bg2:#07131f;
---card:#162536;
---accent:#2ea6d6;
---text:#e8f1ff;
-}
-
-*{box-sizing:border-box}
-
-html,body{
-margin:0;
-height:100%;
-background:linear-gradient(180deg,var(--bg1),var(--bg2));
-font-family:Inter,Arial,sans-serif;
-color:var(--text);
-overflow:hidden;
-}
-
-.app{
-height:100vh;
-width:100vw;
-padding:15px;
-display:flex;
-flex-direction:column;
-}
-
-.header{
-text-align:center;
-font-size:24px;
-margin-bottom:10px;
-}
-
-.layout{
-flex:1;
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:15px;
-overflow:hidden;
-}
-
-.card{
-background:var(--card);
-border-radius:14px;
-padding:15px;
-display:flex;
-flex-direction:column;
-overflow:auto;
-}
-
-.preview-box{
-position:relative;
-width:100%;
-aspect-ratio:1/1;
-background:#111;
-border-radius:12px;
-overflow:hidden;
-touch-action:none;
-}
-
-canvas{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-}
-
-button{
-padding:12px;
-border-radius:10px;
-background:var(--accent);
-border:none;
-color:white;
-cursor:pointer;
-margin-bottom:10px;
-}
-
-.section-title{
-margin:15px 0 10px;
-opacity:.8;
-}
-
-.color-grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:10px;
-}
-
-.color-item{
-display:flex;
-align-items:center;
-gap:8px;
-padding:8px;
-border-radius:8px;
-background:#0e1b2a;
-cursor:pointer;
-}
-
-.color-dot{
-width:14px;
-height:14px;
-border-radius:50%;
-}
-
-.design-grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:10px;
-}
-
-.design-item{
-background:#0b1624;
-padding:10px;
-border-radius:10px;
-text-align:center;
-cursor:pointer;
-border:2px solid transparent;
-}
-
-.design-item.active{
-border:2px solid var(--accent);
-}
-
-@media(max-width:900px){
-.layout{grid-template-columns:1fr;}
-}
-</style>
-</head>
-
-<body>
-
-<div class="app">
-<div class="header">🎨 PRIVET Avatar Editor</div>
-
-<div class="layout">
-
-<div class="card">
-<input type="file" id="upload" hidden>
-<button onclick="upload.click()">📷 Загрузить фото</button>
-<button id="modeBtn">✂ Редактировать фото</button>
-<button onclick="downloadImage()">💾 Сохранить PNG</button>
-
-<div class="preview-box">
-<canvas id="canvas" width="1000" height="1000"></canvas>
-</div>
-</div>
-
-<div class="card">
-<div class="section-title">Цвет PRIVET</div>
-<div class="color-grid">
-<div class="color-item" onclick="setColor('white')"><div class="color-dot" style="background:white"></div>Белый</div>
-<div class="color-item" onclick="setColor('red')"><div class="color-dot" style="background:red"></div>Красный</div>
-<div class="color-item" onclick="setColor('blue')"><div class="color-dot" style="background:blue"></div>Синий</div>
-<div class="color-item" onclick="setColor('green')"><div class="color-dot" style="background:green"></div>Зелёный</div>
-<div class="color-item" onclick="setColor('gold')"><div class="color-dot" style="background:gold"></div>Жёлтый</div>
-<div class="color-item" onclick="setColor('purple')"><div class="color-dot" style="background:purple"></div>Фиолетовый</div>
-</div>
-
-<div class="section-title">Выбери шрифт</div>
-<div class="design-grid" id="fonts"></div>
-</div>
-
-</div>
-</div>
-
 <script>
 const tg = window.Telegram?.WebApp;
 if(tg){
 tg.ready();
 tg.expand();
 setTimeout(()=>tg.expand(),150);
+if (tg.requestFullscreen) {
+    tg.requestFullscreen();
 }
 
 const canvas=document.getElementById("canvas");
@@ -200,6 +24,10 @@ let textX=0,textY=0,textScale=1;
 
 let selectedFont="Bebas Neue";
 let selectedColor="white";
+
+let isDragging=false;
+let startX=0;
+let startY=0;
 
 const fonts=[
 'Bebas Neue','Anton','Oswald','Rubik Mono One',
@@ -250,6 +78,41 @@ textScale=Math.min(Math.max(.5,textScale+delta),3);
 }
 draw();
 });
+
+/* ===== ДОБАВЛЕНО: ПЕРЕМЕЩЕНИЕ ===== */
+
+canvas.addEventListener("pointerdown",e=>{
+isDragging=true;
+startX=e.clientX;
+startY=e.clientY;
+canvas.setPointerCapture(e.pointerId);
+});
+
+canvas.addEventListener("pointermove",e=>{
+if(!isDragging) return;
+
+const dx=e.clientX-startX;
+const dy=e.clientY-startY;
+
+startX=e.clientX;
+startY=e.clientY;
+
+if(mode==="photo"){
+imgX+=dx;
+imgY+=dy;
+}else{
+textX+=dx;
+textY+=dy;
+}
+
+draw();
+});
+
+canvas.addEventListener("pointerup",()=>{
+isDragging=false;
+});
+
+/* ===== КОНЕЦ ДОБАВЛЕННОГО ===== */
 
 function setColor(c){
 selectedColor=c;
@@ -306,6 +169,3 @@ uploadToCloudinary();
 
 draw();
 </script>
-
-</body>
-</html>
