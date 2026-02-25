@@ -358,12 +358,7 @@ ctx.drawImage(image,500-w/2+imgX,500-h/2+imgY,w,h);
 }
 
 ctx.textAlign="center";
-const fontSize = 100*textScale;
 ctx.font="bold "+(120*textScale)+"px "+selectedFont;
-
-const lineGap = fontSize * 1.2;
-
-const centerY = 500 + textY;
 
 // 🔥 Свечение под выбранный цвет
 ctx.shadowColor=selectedColor;
@@ -373,11 +368,11 @@ ctx.shadowOffsetY=0;
 
 // Первая строка
 ctx.fillStyle="white";
-ctx.drawTextMultiLine("КОД",500+textX,centrY - lineGap/2,lineGap,"rgba(255,255,255,0.8)");
+ctx.fillText("КОД",500+textX,480+textY);
 
 // Вторая строка
 ctx.fillStyle=selectedColor;
-ctx.drawTextMultiLine("PRIVET",500+textX,centerY - lineGap/2,lineGap"rgba(46,166,214,0.8)");
+ctx.fillText("PRIVET",500+textX,600+textY);
 
 // Сброс свечения
 ctx.shadowBlur=0;
@@ -406,10 +401,4 @@ draw();
 
 </body>
 </html>
-
-
-
-
-
-
 
