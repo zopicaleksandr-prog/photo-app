@@ -259,104 +259,91 @@ modeBtn.textContent=mode==="photo"?
 "🔄 Редактировать текст":"✂ Редактировать фото";
 };
 
-// Масштаб колесиком мыши
 canvas.addEventListener("wheel",e=>{
 e.preventDefault();
 const delta=e.deltaY*-0.001;
-if(mode==="photo"){imgScale=Math.min(Math.max(.1,imgScale+delta),5);}
-else{textScale=Math.min(Math.max(.5,textScale+delta),3);}
+if(mode==="photo"){
+imgScale=Math.min(Math.max(.1,imgScale+delta),5);
+}else{
+textScale=Math.min(Math.max(.5,textScale+delta),3);
+}
 draw();
 });
 
-// Перетаскивание и мультитач
 let isDragging=false;
 let startX=0,startY=0;
 let lastDistance=0;
 let isScaling=false;
 
 function getDistance(touches){
-    const dx = touches[0].clientX - touches[1].clientX;
-    const dy = touches[0].clientY - touches[1].clientY;
-    return Math.hypot(dx,dy);
+const dx = touches[0].clientX - touches[1].clientX;
+const dy = touches[0].clientY - touches[1].clientY;
+return Math.hypot(dx,dy);
 }
 
-// Движение мышью
 canvas.addEventListener("mousedown", e=>{
-    isDragging=true;
-    startX=e.offsetX;
-    startY=e.offsetY;
+isDragging=true;
+startX=e.offsetX;
+startY=e.offsetY;
 });
 canvas.addEventListener("mousemove", e=>{
-    if(!isDragging) return;
-    const dx=e.offsetX - startX;
-    const dy=e.offsetY - startY;
-    startX=e.offsetX;
-    startY=e.offsetY;
-    if(mode==="photo"){imgX+=dx; imgY+=dy;} else {textX+=dx;textY+=dy;}
-    draw();
+if(!isDragging) return;
+const dx=e.offsetX - startX;
+const dy=e.offsetY - startY;
+startX=e.offsetX;
+startY=e.offsetY;
+if(mode==="photo"){imgX+=dx; imgY+=dy;}
+else{textX+=dx;textY+=dy;}
+draw();
 });
-canvas.addEventListener("mouseup", e=>isDragging=false);
-canvas.addEventListener("mouseleave", e=>isDragging=false);
+canvas.addEventListener("mouseup", ()=>isDragging=false);
+canvas.addEventListener("mouseleave", ()=>isDragging=false);
 
-// Движение/масштаб на мобильных
 canvas.addEventListener("touchstart", e=>{
-    if(e.touches.length==1){
-        isDragging=true;
-        const t=e.touches[0];
-        const rect=canvas.getBoundingClientRect();
-        startX=t.clientX-rect.left;
-        startY=t.clientY-rect.top;
-    } else if(e.touches.length==2){
-        isScaling=true;
-        lastDistance=getDistance(e.touches);
-    }
+if(e.touches.length==1){
+isDragging=true;
+const t=e.touches[0];
+const rect=canvas.getBoundingClientRect();
+startX=t.clientX-rect.left;
+startY=t.clientY-rect.top;
+}else if(e.touches.length==2){
+isScaling=true;
+lastDistance=getDistance(e.touches);
+}
 });
+
 canvas.addEventListener("touchmove", e=>{
-    e.preventDefault();
-    const rect=canvas.getBoundingClientRect();
-    if(isDragging && e.touches.length==1){
-        const t=e.touches[0];
-        const dx=(t.clientX-rect.left)-startX;
-        const dy=(t.clientY-rect.top)-startY;
-        startX=t.clientX-rect.left;
-        startY=t.clientY-rect.top;
-        if(mode==="photo"){imgX+=dx; imgY+=dy;} else {textX+=dx;textY+=dy;}
-    } else if(isScaling && e.touches.length==2){
-        const dist=getDistance(e.touches);
-        const delta=dist/lastDistance;
-        lastDistance=dist;
-        if(mode==="photo"){imgScale=Math.min(Math.max(.1,imgScale*delta),5);}
-        else{textScale=Math.min(Math.max(.5,textScale*delta),3);}
-    }
-    draw();
+e.preventDefault();
+const rect=canvas.getBoundingClientRect();
+if(isDragging && e.touches.length==1){
+const t=e.touches[0];
+const dx=(t.clientX-rect.left)-startX;
+const dy=(t.clientY-rect.top)-startY;
+startX=t.clientX-rect.left;
+startY=t.clientY-rect.top;
+if(mode==="photo"){imgX+=dx; imgY+=dy;}
+else{textX+=dx;textY+=dy;}
+}else if(isScaling && e.touches.length==2){
+const dist=getDistance(e.touches);
+const delta=dist/lastDistance;
+lastDistance=dist;
+if(mode==="photo"){
+imgScale=Math.min(Math.max(.1,imgScale*delta),5);
+}else{
+textScale=Math.min(Math.max(.5,textScale*delta),3);
+}
+}
+draw();
 },{passive:false});
+
 canvas.addEventListener("touchend", e=>{
-    if(e.touches.length<2) isScaling=false;
-    if(e.touches.length==0) isDragging=false;
+if(e.touches.length<2) isScaling=false;
+if(e.touches.length==0) isDragging=false;
 });
 
-function setColor(c){selectedColor=c; draw();}
-
-// Многострочный текст с фиксированным lineHeight и свечением
-function drawTextMultiLine(text,x,y,lineHeight, glowColor){
-    const words=text.split(" ");
-    let line="";
-    let lineY=y;
-    ctx.shadowColor = glowColor;
-    ctx.shadowBlur = 20;
-    for(let n=0;n<words.length;n++){
-        const testLine=line+words[n]+" ";
-        const metrics=ctx.measureText(testLine);
-        if(metrics.width>800){
-            ctx.fillText(line,x,lineY);
-            line=words[n]+" ";
-            lineY+=lineHeight;
-        } else {line=testLine;}
-    }
-    ctx.fillText(line,x,lineY);
-    // Сброс свечения после рисования
-    ctx.shadowColor="transparent";
-    ctx.shadowBlur=0;
+function setColor(c){
+selectedColor=c;
+draw();
 }
 
 function draw(){
@@ -365,24 +352,32 @@ ctx.fillStyle="#111";
 ctx.fillRect(0,0,1000,1000);
 
 if(image.src){
-    const w=image.width*imgScale;
-    const h=image.height*imgScale;
-    ctx.drawImage(image,500-w/2+imgX,500-h/2+imgY,w,h);
+const w=image.width*imgScale;
+const h=image.height*imgScale;
+ctx.drawImage(image,500-w/2+imgX,500-h/2+imgY,w,h);
 }
 
 ctx.textAlign="center";
-ctx.font="bold "+(100*textScale)+"px "+selectedFont;
+ctx.font="bold "+(120*textScale)+"px "+selectedFont;
 
-// Свечение для первой строки
+// 🔥 Свечение под выбранный цвет
+ctx.shadowColor=selectedColor;
+ctx.shadowBlur=30;
+ctx.shadowOffsetX=0;
+ctx.shadowOffsetY=0;
+
+// Первая строка
 ctx.fillStyle="white";
-drawTextMultiLine("КОД",500+textX,450+textY,100*textScale*1.1,"rgba(255,255,255,0.8)");
+ctx.fillText("КОД",500+textX,480+textY);
 
-// Свечение для второй строки
+// Вторая строка
 ctx.fillStyle=selectedColor;
-drawTextMultiLine("PRIVET",500+textX,550+textY,100*textScale*1.1,"rgba(46,166,214,0.8)");
+ctx.fillText("PRIVET",500+textX,600+textY);
+
+// Сброс свечения
+ctx.shadowBlur=0;
 }
 
-// Cloudinary
 async function uploadToCloudinary(){
 const imageData=canvas.toDataURL("image/png");
 const formData=new FormData();
@@ -406,6 +401,7 @@ draw();
 
 </body>
 </html>
+
 
 
 
