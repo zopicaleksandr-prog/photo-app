@@ -76,10 +76,10 @@
 
   /* ----- ЛЕВАЯ ПАНЕЛЬ ----- */
 
-  .upload-box{
+  .upload-btn{
   border:2px dashed rgba(255,255,255,.15);
   border-radius:18px;
-  height:130px;
+  height:50px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -200,9 +200,9 @@
 <div class="card">
 <div class="section-title">Фото</div>
 
-<div class="upload-box" onclick="upload.click()">
+<button class="upload-btn" onclick="upload.click()">
 Загрузи фото из галереи...
-</div>
+</button>
 
 <div class="preview-wrapper">
 <div class="preview-box">
@@ -455,3 +455,4 @@ el.classList.add("active");
 
 </body>
 </html>
+
