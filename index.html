@@ -186,6 +186,38 @@
   overflow:auto;
   }
   }
+  .controls{
+display:flex;
+flex-direction:column;
+gap:10px;
+width:100%;
+}
+
+.control-row{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+background:var(--inner);
+padding:10px;
+border-radius:12px;
+}
+
+.control-row button{
+flex:1;
+height:40px;
+border:none;
+border-radius:10px;
+background:#1a2942;
+color:white;
+cursor:pointer;
+font-size:14px;
+}
+
+.control-row span{
+flex:1;
+opacity:.6;
+}
 </style>
 </head>
 
@@ -470,6 +502,7 @@ el.classList.add("active");
 
 </body>
 </html>
+
 
 
 
