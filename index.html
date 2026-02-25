@@ -346,36 +346,36 @@ selectedColor=c;
 draw();
 }
 
-function draw(){
-ctx.clearRect(0,0,1000,1000);
-ctx.fillStyle="#111";
-ctx.fillRect(0,0,1000,1000);
+function drawCanvas(){
 
-if(image.src){
-const w=image.width*imgScale;
-const h=image.height*imgScale;
-ctx.drawImage(image,500-w/2+imgX,500-h/2+imgY,w,h);
-}
+    ctx.clearRect(0,0,1080,1080);
 
-ctx.textAlign="center";
-ctx.font="bold "+(120*textScale)+"px "+selectedFont;
+    if(userImage.src){
+        ctx.drawImage(
+            userImage,
+            imgX,
+            imgY,
+            userImage.width*imgScale,
+            userImage.height*imgScale
+        );
+    }
 
-// 🔥 Свечение под выбранный цвет
-ctx.shadowColor=selectedColor;
-ctx.shadowBlur=30;
-ctx.shadowOffsetX=0;
-ctx.shadowOffsetY=0;
+    // Свечение
+    ctx.shadowColor=selectedColor;
+    ctx.shadowBlur=30;
+    ctx.shadowOffsetX=0;
+    ctx.shadowOffsetY=0;
 
-// Первая строка
-ctx.fillStyle="white";
-ctx.fillText("КОД",500+textX,480+textY);
+    ctx.textAlign="center";
+    ctx.font=`bold ${120*textScale}px ${selectedFont}`;
 
-// Вторая строка
-ctx.fillStyle=selectedColor;
-ctx.fillText("PRIVET",500+textX,600+textY);
+    ctx.fillStyle="white";
+    ctx.fillText("КОД", textX, textY-120*textScale);
 
-// Сброс свечения
-ctx.shadowBlur=0;
+    ctx.fillStyle=selectedColor;
+    ctx.fillText("PRIVET", textX, textY);
+
+    ctx.shadowBlur=0;
 }
 
 async function uploadToCloudinary(){
@@ -401,5 +401,6 @@ draw();
 
 </body>
 </html>
+
 
 
