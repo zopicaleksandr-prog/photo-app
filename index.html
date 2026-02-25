@@ -10,185 +10,182 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
-:root{
---bg1:#0b1220;
---bg2:#070d18;
---card:#121a2b;
---card2:#0f1726;
---accent:#2ea6d6;
---green1:#3bd14f;
---green2:#1fa532;
---text:#e8f1ff;
-}
+  :root{
+  --bgTop:#0b1422;
+  --bgBottom:#060b16;
+  --panel:#0f1b2d;
+  --panel2:#0c1626;
+  --inner:#0a1322;
+  --text:#ffffff;
+  --muted:rgba(255,255,255,.5);
+  --red:#ff1e1e;
+  --green1:#45e05d;
+  --green2:#1ea932;
+  }
 
-*{box-sizing:border-box}
+  *{box-sizing:border-box}
 
-html,body{
-width:100%;
-height:100%;
-margin:0;
-padding:0;
-background:linear-gradient(180deg,var(--bg1),var(--bg2));
-font-family:Inter,Arial,sans-serif;
-color:var(--text);
-overflow:hidden;
-}
+  html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  font-family:Inter,Arial,sans-serif;
+  background:linear-gradient(180deg,var(--bgTop),var(--bgBottom));
+  color:var(--text);
+  overflow:hidden;
+  }
 
-.app{
-height:100vh;
-width:100vw;
-padding:18px;
-display:flex;
-flex-direction:column;
-}
+  .app{
+  height:100vh;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  }
 
-.header{
-text-align:left;
-font-size:20px;
-font-weight:600;
-margin-bottom:15px;
-opacity:.9;
-}
+  .header{
+  font-size:18px;
+  margin-bottom:20px;
+  opacity:.9;
+  }
 
-.layout{
-flex:1;
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:18px;
-overflow:hidden;
-}
+  /* 3 колонки */
+  .layout{
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:20px;
+  }
 
-.card{
-background:linear-gradient(180deg,var(--card),var(--card2));
-border-radius:18px;
-padding:18px;
-display:flex;
-flex-direction:column;
-overflow:auto;
-box-shadow:0 10px 30px rgba(0,0,0,.4);
-}
+  /* панели */
+  .card{
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
+  border-radius:20px;
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  }
 
-/* PREVIEW */
+  .section-title{
+  text-align:center;
+  font-size:14px;
+  opacity:.6;
+  margin-bottom:15px;
+  letter-spacing:.5px;
+  }
 
-.preview-box{
-position:relative;
-width:100%;
-aspect-ratio:1/1;
-background:#0a111c;
-border-radius:16px;
-overflow:hidden;
-border:2px solid rgba(255,255,255,.05);
-}
+  /* ----- ЛЕВАЯ ПАНЕЛЬ ----- */
 
-canvas{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-}
+  .upload-box{
+  border:2px dashed rgba(255,255,255,.15);
+  border-radius:18px;
+  height:130px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:var(--muted);
+  margin-bottom:15px;
+  cursor:pointer;
+  }
 
-/* BUTTONS */
+  .preview-wrapper{
+  background:var(--inner);
+  border-radius:18px;
+  padding:15px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:15px;
+  }
 
-button{
-padding:14px;
-border-radius:12px;
-background:#1a2436;
-border:none;
-color:white;
-cursor:pointer;
-margin-bottom:12px;
-font-size:14px;
-transition:.2s;
-}
+  .preview-box{
+  position:relative;
+  width:100%;
+  aspect-ratio:1/1;
+  background:#000;
+  border-radius:14px;
+  overflow:hidden;
+  }
 
-button:hover{
-background:#243049;
-}
+  canvas{
+  position:absolute;
+  width:100%;
+  height:100%;
+  }
 
-button:last-of-type{
-background:linear-gradient(180deg,var(--green1),var(--green2));
-font-weight:600;
-}
+  .download-btn{
+  margin-top:auto;
+  height:50px;
+  border:none;
+  border-radius:14px;
+  font-weight:600;
+  font-size:15px;
+  cursor:pointer;
+  background:linear-gradient(180deg,var(--green1),var(--green2));
+  color:white;
+  }
 
-button:last-of-type:hover{
-filter:brightness(1.1);
-}
+  /* ----- ЦВЕТА ----- */
 
-/* TITLES */
+  .color-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  }
 
-.section-title{
-margin:18px 0 12px;
-font-size:14px;
-opacity:.6;
-letter-spacing:.5px;
-}
+  .color-item{
+  background:var(--inner);
+  border-radius:16px;
+  height:80px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  border:3px solid transparent;
+  }
 
-/* COLOR GRID */
+  .color-item.active{
+  border:3px solid white;
+  }
 
-.color-grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:14px;
-}
+  .color-dot{
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:var(--red);
+  }
 
-.color-item{
-background:#0e1626;
-border-radius:14px;
-height:70px;
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-transition:.2s;
-border:2px solid transparent;
-}
+  /* ----- ШРИФТЫ ----- */
 
-.color-item:hover{
-border:2px solid var(--accent);
-}
+  .design-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  }
 
-.color-dot{
-width:18px;
-height:18px;
-border-radius:50%;
-}
+  .design-item{
+  background:var(--inner);
+  border-radius:16px;
+  height:80px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  border:3px solid transparent;
+  font-size:18px;
+  }
 
-/* FONT GRID */
+  .design-item.active{
+  border:3px solid white;
+  }
 
-.design-grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:14px;
-}
-
-.design-item{
-background:#0e1626;
-padding:18px;
-border-radius:16px;
-text-align:center;
-cursor:pointer;
-border:2px solid transparent;
-font-size:18px;
-transition:.2s;
-}
-
-.design-item:hover{
-border:2px solid var(--accent);
-}
-
-.design-item.active{
-border:2px solid white;
-box-shadow:0 0 15px rgba(255,255,255,.2);
-}
-
-/* MOBILE */
-
-@media(max-width:900px){
-.layout{
-grid-template-columns:1fr;
-}
-}
+  @media(max-width:1000px){
+  .layout{
+  grid-template-columns:1fr;
+  overflow:auto;
+  }
+  }
 </style>
 </head>
 
@@ -199,45 +196,47 @@ grid-template-columns:1fr;
 
 <div class="layout">
 
+<!-- ФОТО -->
 <div class="card">
-<input type="file" id="upload" hidden>
-<button onclick="upload.click()">📷 Загрузить фото</button>
-<button id="modeBtn">✂ Редактировать фото</button>
-<button onclick="downloadImage()">💾 Сохранить PNG</button>
+<div class="section-title">Фото</div>
 
+<div class="upload-box" onclick="upload.click()">
+Загрузи фото из галереи...
+</div>
+
+<div class="preview-wrapper">
 <div class="preview-box">
 <canvas id="canvas" width="1000" height="1000"></canvas>
-<div class="instructions">
 </div>
+
+<button class="download-btn" onclick="downloadImage()">
+Скачать
+</button>
 </div>
 </div>
 
+<!-- ЦВЕТА -->
 <div class="card">
-<div class="section-title">Цвет текста</div>
+<div class="section-title">Цвета</div>
 <div class="color-grid">
-<div class="color-item" onclick="setColor('white')"><div class="color-dot" style="background:white"></div>Белый</div>
-<div class="color-item" onclick="setColor('red')"><div class="color-dot" style="background:red"></div>Красный</div>
-<div class="color-item" onclick="setColor('blue')"><div class="color-dot" style="background:blue"></div>Синий</div>
-<div class="color-item" onclick="setColor('green')"><div class="color-dot" style="background:green"></div>Зелёный</div>
-<div class="color-item" onclick="setColor('gold')"><div class="color-dot" style="background:gold"></div>Жёлтый</div>
-<div class="color-item" onclick="setColor('purple')"><div class="color-dot" style="background:purple"></div>Фиолетовый</div>
-<div class="color-item" onclick="setColor('pink')"><div class="color-dot" style="background:pink"></div>Розовый</div>
-<div class="color-item" onclick="setColor('orange')"><div class="color-dot" style="background:orange"></div>Оранжевый</div>
-<div class="color-item" onclick="setColor('turquoise')"><div class="color-dot" style="background:turquoise"></div>Бирюзовый</div>   
-<div class="color-item" onclick="setColor('black')"><div class="color-dot" style="background:black"></div>Чёрный</div>
+<div class="color-item active" onclick="setColor('red');setActive(this,'color-item')"><div class="color-dot"></div></div>
+<div class="color-item" onclick="setColor('white');setActive(this,'color-item')"><div class="color-dot" style="background:white"></div></div>
+<div class="color-item" onclick="setColor('blue');setActive(this,'color-item')"><div class="color-dot" style="background:blue"></div></div>
+<div class="color-item" onclick="setColor('green');setActive(this,'color-item')"><div class="color-dot" style="background:green"></div></div>
+<div class="color-item" onclick="setColor('gold');setActive(this,'color-item')"><div class="color-dot" style="background:gold"></div></div>
+<div class="color-item" onclick="setColor('purple');setActive(this,'color-item')"><div class="color-dot" style="background:purple"></div></div>
+<div class="color-item" onclick="setColor('pink');setActive(this,'color-item')"><div class="color-dot" style="background:pink"></div></div>
+<div class="color-item" onclick="setColor('orange');setActive(this,'color-item')"><div class="color-dot" style="background:orange"></div></div>
+<div class="color-item" onclick="setColor('turquoise');setActive(this,'color-item')"><div class="color-dot" style="background:turquoise"></div></div>
+</div>
 </div>
 
-<div class="section-title">Выбери шрифт</div>
-<div class="info">
-Управление наложением:<br>
-• 1 палец - перемещение<br>
-• 2 пальца - масштаб и поворот<br>
-• Колесо мыши - масштаб (на ПК)
-</div>
+<!-- ШРИФТ -->
+<div class="card">
+<div class="section-title">Шрифт</div>
 <div class="design-grid" id="fonts"></div>
 </div>
 
-</div>
 </div>
 
 <script>
@@ -448,12 +447,11 @@ else{window.open(data.secure_url,"_blank");}
 function downloadImage(){uploadToCloudinary();}
 
 draw();
+function setActive(el,className){
+document.querySelectorAll("." + className).forEach(i=>i.classList.remove("active"));
+el.classList.add("active");
+}
 </script>
 
 </body>
 </html>
-
-
-
-
-
