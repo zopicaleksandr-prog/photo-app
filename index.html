@@ -206,6 +206,20 @@
 <input type="file" id="upload" hidden accept="image/*">
 
 <div class="preview-wrapper">
+<div class="controls">
+
+<div class="control-row">
+<button onclick="setMode('photo')">Фото</button>
+<button onclick="setMode('text')">Текст</button>
+</div>
+
+<div class="control-row">
+<span>Масштаб</span>
+<button onclick="changeScale(-0.1)">−</button>
+<button onclick="changeScale(0.1)">+</button>
+</div>
+
+</div>
 <div class="preview-box">
 <canvas id="canvas" width="1000" height="1000"></canvas>
 </div>
@@ -456,5 +470,6 @@ el.classList.add("active");
 
 </body>
 </html>
+
 
 
