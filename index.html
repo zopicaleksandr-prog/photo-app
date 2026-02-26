@@ -268,8 +268,8 @@
 <div class="preview-wrapper">
 <div class="controls">
 <div class="control-row">
-<button onclick="setMode('photo')">Фото</button>
-<button onclick="setMode('text')">Текст</button>
+<button onclick="setMode('photo')">Движение фото</button>
+<button onclick="setMode('text')">Движение текста</button>
 </div>
 <div class="control-row">
 <span>Масштаб</span>
@@ -299,6 +299,15 @@
 <div class="color-item" onclick="setColor('orange');setActive(this,'color-item')"><div class="color-dot" style="background:orange"></div></div>
 <div class="color-item" onclick="setColor('turquoise');setActive(this,'color-item')"><div class="color-dot" style="background:turquoise"></div></div>
 </div>
+</div>
+<div class="card">
+  <div class="section-title">Управление</div>
+  <div class="info-text">
+    • 1 палец — перемещение фото или текста<br>
+    • 2 пальца — масштаб (pinch to zoom)<br>
+    • Колесо мыши — масштаб (на ПК)<br>
+    • Кнопки «Фото» / «Текст» — переключение режима
+  </div>
 </div>
 <!-- ШРИФТ -->
 <div class="card">
@@ -570,6 +579,7 @@ draw();
 </script>
 </body>
 </html>
+
 
 
 
