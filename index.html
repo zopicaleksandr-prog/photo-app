@@ -4,455 +4,508 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>PRIVET Avatar Editor</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Oswald&family=Rubik+Mono+One&family=Orbitron:wght@700&family=Russo+One&family=Exo+2:wght@800&family=Teko:wght@700&family=Montserrat:wght@900&family=Rajdhani:wght@700&family=Play:wght@700&display=swap" rel="stylesheet">
-
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
 <style>
-:root{
---bg1:#0b1220;
---bg2:#070d18;
---card:#121a2b;
---card2:#0f1726;
---accent:#2ea6d6;
---green1:#3bd14f;
---green2:#1fa532;
---text:#e8f1ff;
-}
-
-*{box-sizing:border-box}
-
-html,body{
-width:100%;
-height:100%;
-margin:0;
-padding:0;
-background:linear-gradient(180deg,var(--bg1),var(--bg2));
-font-family:Inter,Arial,sans-serif;
-color:var(--text);
-overflow:hidden;
-}
-
-.app{
-height:100vh;
-width:100vw;
-padding:18px;
-display:flex;
-flex-direction:column;
-}
-
-.header{
-text-align:left;
-font-size:20px;
-font-weight:600;
-margin-bottom:15px;
-opacity:.9;
-}
-
-.layout{
-flex:1;
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:18px;
-overflow:hidden;
-}
-
-.card{
-background:linear-gradient(180deg,var(--card),var(--card2));
-border-radius:18px;
-padding:18px;
-display:flex;
-flex-direction:column;
-overflow:auto;
-box-shadow:0 10px 30px rgba(0,0,0,.4);
-}
-
-/* PREVIEW */
-
-.preview-box{
-position:relative;
-width:100%;
-aspect-ratio:1/1;
-background:#0a111c;
-border-radius:16px;
-overflow:hidden;
-border:2px solid rgba(255,255,255,.05);
-}
-
-canvas{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-}
-
-/* BUTTONS */
-
-button{
-padding:14px;
-border-radius:12px;
-background:#1a2436;
-border:none;
-color:white;
-cursor:pointer;
-margin-bottom:12px;
-font-size:14px;
-transition:.2s;
-}
-
-button:hover{
-background:#243049;
-}
-
-button:last-of-type{
-background:linear-gradient(180deg,var(--green1),var(--green2));
-font-weight:600;
-}
-
-button:last-of-type:hover{
-filter:brightness(1.1);
-}
-
-/* TITLES */
-
-.section-title{
-margin:18px 0 12px;
-font-size:14px;
-opacity:.6;
-letter-spacing:.5px;
-}
-
-/* COLOR GRID */
-
-.color-grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:14px;
-}
-
-.color-item{
-background:#0e1626;
-border-radius:14px;
-height:70px;
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-transition:.2s;
-border:2px solid transparent;
-}
-
-.color-item:hover{
-border:2px solid var(--accent);
-}
-
-.color-dot{
-width:18px;
-height:18px;
-border-radius:50%;
-}
-
-/* FONT GRID */
-
-.design-grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:14px;
-}
-
-.design-item{
-background:#0e1626;
-padding:18px;
-border-radius:16px;
-text-align:center;
-cursor:pointer;
-border:2px solid transparent;
-font-size:18px;
-transition:.2s;
-}
-
-.design-item:hover{
-border:2px solid var(--accent);
-}
-
-.design-item.active{
-border:2px solid white;
-box-shadow:0 0 15px rgba(255,255,255,.2);
-}
-
-/* MOBILE */
-
-@media(max-width:900px){
-.layout{
-grid-template-columns:1fr;
-}
-}
+  :root{
+  --bgTop:#0b1422;
+  --bgBottom:#060b16;
+  --panel:#0f1b2d;
+  --panel2:#0c1626;
+  --inner:#0a1322;
+  --text:#ffffff;
+  --muted:rgba(255,255,255,.5);
+  --red:#ff1e1e;
+  --green1:#45e05d;
+  --green2:#1ea932;
+  }
+  *{box-sizing:border-box}
+  html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  font-family:Inter,Arial,sans-serif;
+  background:linear-gradient(180deg,var(--bgTop),var(--bgBottom));
+  color:var(--text);
+  overflow:hidden;
+  }
+  .app{
+  height:100vh;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  }
+  .header{
+  font-size:18px;
+  margin-bottom:20px;
+  opacity:.9;
+  }
+  /* 3 колонки */
+  .layout{
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:20px;
+  }
+  /* панели */
+  .card{
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
+  border-radius:20px;
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  }
+  .section-title{
+  text-align:center;
+  font-size:14px;
+  opacity:.6;
+  margin-bottom:15px;
+  letter-spacing:.5px;
+  }
+  /* ----- ЛЕВАЯ ПАНЕЛЬ ----- */
+  .upload-btn{
+  background:linear-gradient(180deg,var(--green1),var(--green2));
+  border-radius:18px;
+  height:50px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:var(--muted);
+  margin-bottom:15px;
+  cursor:pointer;
+  }
+  .preview-wrapper{
+  background:var(--inner);
+  border-radius:18px;
+  padding:15px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:15px;
+  }
+  .preview-box{
+  position:relative;
+  width:100%;
+  aspect-ratio:1/1;
+  background:#000;
+  border-radius:14px;
+  overflow:hidden;
+  }
+  canvas{
+  position:absolute;
+  width:100%;
+  height:100%;
+  }
+  .download-btn{
+  margin-top:auto;
+  height:50px;
+  border:none;
+  border-radius:14px;
+  font-weight:600;
+  font-size:15px;
+  cursor:pointer;
+  background:linear-gradient(180deg,var(--green1),var(--green2));
+  color:white;
+  }
+  /* ----- ЦВЕТА ----- */
+  .color-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  }
+  .color-item{
+  background:var(--inner);
+  border-radius:16px;
+  height:80px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  border:3px solid transparent;
+  }
+  .color-item.active{
+  border:3px solid white;
+  }
+  .color-dot{
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:var(--red);
+  }
+  /* ----- ШРИФТЫ ----- */
+  .design-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  }
+  .design-item{
+  background:var(--inner);
+  border-radius:16px;
+  height:80px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  border:3px solid transparent;
+  font-size:18px;
+  }
+  .design-item.active{
+  border:3px solid white;
+  }
+  @media(max-width:1000px){
+  .layout{
+  grid-template-columns:1fr;
+  overflow:auto;
+  }
+  }
+  .controls{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  width:100%;
+  }
+  .control-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  background:var(--inner);
+  padding:10px;
+  border-radius:12px;
+  }
+  .control-row button{
+  flex:1;
+  height:40px;
+  border:none;
+  border-radius:10px;
+  background:#1a2942;
+  color:white;
+  cursor:pointer;
+  font-size:14px;
+  }
+  .control-row span{
+  flex:1;
+  opacity:.6;
+  }
 </style>
 </head>
-
 <body>
-
 <div class="app">
 <div class="header">🎨 PRIVET Avatar Editor</div>
-
 <div class="layout">
-
+<!-- ФОТО -->
 <div class="card">
-<input type="file" id="upload" hidden>
-<button onclick="upload.click()">📷 Загрузить фото</button>
-<button id="modeBtn">✂ Редактировать фото</button>
-<button onclick="downloadImage()">💾 Сохранить PNG</button>
-
+<div class="section-title">Фото</div>
+<button class="upload-btn" onclick="upload.click()">
+Загрузи фото из галереи...
+</button>
+<input type="file" id="upload" hidden accept="image/*">
+<div class="preview-wrapper">
+<div class="controls">
+<div class="control-row">
+<button onclick="setMode('photo')">Фото</button>
+<button onclick="setMode('text')">Текст</button>
+</div>
+<div class="control-row">
+<span>Масштаб</span>
+<button onclick="changeScale(-0.1)">−</button>
+<button onclick="changeScale(0.1)">+</button>
+</div>
+</div>
 <div class="preview-box">
 <canvas id="canvas" width="1000" height="1000"></canvas>
-<div class="instructions">
+</div>
+<button class="download-btn" onclick="downloadImage()">
+Скачать
+</button>
 </div>
 </div>
-</div>
-
+<!-- ЦВЕТА -->
 <div class="card">
-<div class="section-title">Цвет текста</div>
+<div class="section-title">Цвета</div>
 <div class="color-grid">
-<div class="color-item" onclick="setColor('white')"><div class="color-dot" style="background:white"></div>Белый</div>
-<div class="color-item" onclick="setColor('red')"><div class="color-dot" style="background:red"></div>Красный</div>
-<div class="color-item" onclick="setColor('blue')"><div class="color-dot" style="background:blue"></div>Синий</div>
-<div class="color-item" onclick="setColor('green')"><div class="color-dot" style="background:green"></div>Зелёный</div>
-<div class="color-item" onclick="setColor('gold')"><div class="color-dot" style="background:gold"></div>Жёлтый</div>
-<div class="color-item" onclick="setColor('purple')"><div class="color-dot" style="background:purple"></div>Фиолетовый</div>
-<div class="color-item" onclick="setColor('pink')"><div class="color-dot" style="background:pink"></div>Розовый</div>
-<div class="color-item" onclick="setColor('orange')"><div class="color-dot" style="background:orange"></div>Оранжевый</div>
-<div class="color-item" onclick="setColor('turquoise')"><div class="color-dot" style="background:turquoise"></div>Бирюзовый</div>   
-<div class="color-item" onclick="setColor('black')"><div class="color-dot" style="background:black"></div>Чёрный</div>
+<div class="color-item active" onclick="setColor('red');setActive(this,'color-item')"><div class="color-dot"></div></div>
+<div class="color-item" onclick="setColor('white');setActive(this,'color-item')"><div class="color-dot" style="background:white"></div></div>
+<div class="color-item" onclick="setColor('blue');setActive(this,'color-item')"><div class="color-dot" style="background:blue"></div></div>
+<div class="color-item" onclick="setColor('green');setActive(this,'color-item')"><div class="color-dot" style="background:green"></div></div>
+<div class="color-item" onclick="setColor('gold');setActive(this,'color-item')"><div class="color-dot" style="background:gold"></div></div>
+<div class="color-item" onclick="setColor('purple');setActive(this,'color-item')"><div class="color-dot" style="background:purple"></div></div>
+<div class="color-item" onclick="setColor('pink');setActive(this,'color-item')"><div class="color-dot" style="background:pink"></div></div>
+<div class="color-item" onclick="setColor('orange');setActive(this,'color-item')"><div class="color-dot" style="background:orange"></div></div>
+<div class="color-item" onclick="setColor('turquoise');setActive(this,'color-item')"><div class="color-dot" style="background:turquoise"></div></div>
 </div>
-
-<div class="section-title">Выбери шрифт</div>
-<div class="info">
-Управление наложением:<br>
-• 1 палец - перемещение<br>
-• 2 пальца - масштаб и поворот<br>
-• Колесо мыши - масштаб (на ПК)
 </div>
+<!-- ШРИФТ -->
+<div class="card">
+<div class="section-title">Шрифт</div>
 <div class="design-grid" id="fonts"></div>
-</div>
-
 </div>
 </div>
 
 <script>
 const tg = window.Telegram?.WebApp;
 if(tg){
-tg.ready();
-tg.expand();
-if (tg.requestFullscreen) tg.requestFullscreen();
-setTimeout(()=>tg.expand(),150);
+  tg.ready();
+  tg.expand();
+  if (tg.requestFullscreen) tg.requestFullscreen();
+  setTimeout(()=>tg.expand(),150);
 }
 
-const canvas=document.getElementById("canvas");
-const ctx=canvas.getContext("2d");
-const upload=document.getElementById("upload");
-const fontsContainer=document.getElementById("fonts");
-const modeBtn=document.getElementById("modeBtn");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const upload = document.getElementById("upload");
+const fontsContainer = document.getElementById("fonts");
 
-let image=new Image();
-image.crossOrigin="anonymous";
+let image = new Image();
+image.crossOrigin = "anonymous";
 
-let mode="text";
+let mode = "text";
+let imgX = 0, imgY = 0, imgScale = 1;
+let textX = 0, textY = 0, textScale = 1;
 
-let imgX=0,imgY=0,imgScale=1;
-let textX=0,textY=0,textScale=1;
+let selectedFont = "Bebas Neue";
+let selectedColor = "white";
 
-let selectedFont="Bebas Neue";
-let selectedColor="white";
-
-const fonts=[
-'Bebas Neue','Anton','Oswald','Rubik Mono One',
-'Orbitron','Russo One','Exo 2','Teko',
-'Montserrat','Rajdhani','Play'
+const fonts = [
+  'Bebas Neue','Anton','Oswald','Rubik Mono One',
+  'Orbitron','Russo One','Exo 2','Teko',
+  'Montserrat','Rajdhani','Play'
 ];
 
 fonts.forEach((font,i)=>{
-const div=document.createElement("div");
-div.className="design-item"+(i===0?" active":"");
-div.style.fontFamily=font;
-div.innerText="КОД PRIVET";
-div.onclick=()=>{
-document.querySelectorAll(".design-item").forEach(d=>d.classList.remove("active"));
-div.classList.add("active");
-selectedFont=font;
-draw();
-};
-fontsContainer.appendChild(div);
+  const div = document.createElement("div");
+  div.className = "design-item" + (i===0 ? " active" : "");
+  div.style.fontFamily = font;
+  div.innerText = "КОД PRIVET";
+  div.onclick = ()=>{
+    document.querySelectorAll(".design-item").forEach(d=>d.classList.remove("active"));
+    div.classList.add("active");
+    selectedFont = font;
+    draw();
+  };
+  fontsContainer.appendChild(div);
 });
 
-upload.onchange=e=>{
-const reader=new FileReader();
-reader.onload=()=>{
-image=new Image();
-image.crossOrigin="anonymous";
-image.onload=draw;
-image.src=reader.result;
-};
-reader.readAsDataURL(e.target.files[0]);
-};
-
-modeBtn.onclick=()=>{
-mode=mode==="text"?"photo":"text";
-modeBtn.textContent=mode==="photo"?
-"🔄 Редактировать текст":"✂ Редактировать фото";
+upload.onchange = e => {
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    image = new Image();
+    image.crossOrigin = "anonymous";
+    image.onload = draw;
+    image.src = reader.result;
+  };
+  reader.readAsDataURL(e.target.files[0]);
 };
 
-canvas.addEventListener("wheel",e=>{
-e.preventDefault();
-const delta=e.deltaY*-0.001;
-if(mode==="photo"){
-imgScale=Math.min(Math.max(.1,imgScale+delta),5);
-}else{
-textScale=Math.min(Math.max(.5,textScale+delta),3);
-}
-draw();
+// ────────────────────────────────────────────────
+// Перенесённый рабочий блок обработки событий
+// ────────────────────────────────────────────────
+
+canvas.addEventListener("wheel", e => {
+  e.preventDefault();
+  const delta = e.deltaY * -0.001;
+  if (mode === "photo") {
+    imgScale = Math.min(Math.max(.1, imgScale + delta), 5);
+  } else {
+    textScale = Math.min(Math.max(.5, textScale + delta), 3);
+  }
+  draw();
 });
 
-let isDragging=false;
-let startX=0,startY=0;
-let lastDistance=0;
-let isScaling=false;
+let isDragging = false;
+let startX = 0, startY = 0;
+let lastDistance = 0;
+let isScaling = false;
 
-function getDistance(touches){
-const dx = touches[0].clientX - touches[1].clientX;
-const dy = touches[0].clientY - touches[1].clientY;
-return Math.hypot(dx,dy);
+function getDistance(touches) {
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
+  return Math.hypot(dx, dy);
 }
 
-canvas.addEventListener("mousedown", e=>{
-isDragging=true;
-startX=e.offsetX;
-startY=e.offsetY;
-});
-canvas.addEventListener("mousemove", e=>{
-if(!isDragging) return;
-const dx=e.offsetX - startX;
-const dy=e.offsetY - startY;
-startX=e.offsetX;
-startY=e.offsetY;
-if(mode==="photo"){imgX+=dx; imgY+=dy;}
-else{textX+=dx;textY+=dy;}
-draw();
-});
-canvas.addEventListener("mouseup", ()=>isDragging=false);
-canvas.addEventListener("mouseleave", ()=>isDragging=false);
-
-canvas.addEventListener("touchstart", e=>{
-if(e.touches.length==1){
-isDragging=true;
-const t=e.touches[0];
-const rect=canvas.getBoundingClientRect();
-startX=t.clientX-rect.left;
-startY=t.clientY-rect.top;
-}else if(e.touches.length==2){
-isScaling=true;
-lastDistance=getDistance(e.touches);
-}
+canvas.addEventListener("mousedown", e => {
+  isDragging = true;
+  startX = e.offsetX;
+  startY = e.offsetY;
 });
 
-canvas.addEventListener("touchmove", e=>{
-e.preventDefault();
-const rect=canvas.getBoundingClientRect();
-if(isDragging && e.touches.length==1){
-const t=e.touches[0];
-const dx=(t.clientX-rect.left)-startX;
-const dy=(t.clientY-rect.top)-startY;
-startX=t.clientX-rect.left;
-startY=t.clientY-rect.top;
-if(mode==="photo"){imgX+=dx; imgY+=dy;}
-else{textX+=dx;textY+=dy;}
-}else if(isScaling && e.touches.length==2){
-const dist=getDistance(e.touches);
-const delta=dist/lastDistance;
-lastDistance=dist;
-if(mode==="photo"){
-imgScale=Math.min(Math.max(.1,imgScale*delta),5);
-}else{
-textScale=Math.min(Math.max(.5,textScale*delta),3);
-}
-}
-draw();
-},{passive:false});
-
-canvas.addEventListener("touchend", e=>{
-if(e.touches.length<2) isScaling=false;
-if(e.touches.length==0) isDragging=false;
+canvas.addEventListener("mousemove", e => {
+  if (!isDragging) return;
+  const dx = e.offsetX - startX;
+  const dy = e.offsetY - startY;
+  startX = e.offsetX;
+  startY = e.offsetY;
+  if (mode === "photo") { imgX += dx; imgY += dy; }
+  else { textX += dx; textY += dy; }
+  draw();
 });
+
+canvas.addEventListener("mouseup", () => isDragging = false);
+canvas.addEventListener("mouseleave", () => isDragging = false);
+
+canvas.addEventListener("touchstart", e => {
+  if (e.touches.length === 1) {
+    isDragging = true;
+    const t = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    startX = t.clientX - rect.left;
+    startY = t.clientY - rect.top;
+  } else if (e.touches.length === 2) {
+    isScaling = true;
+    lastDistance = getDistance(e.touches);
+  }
+}, {passive: false});
+
+canvas.addEventListener("touchmove", e => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  if (isDragging && e.touches.length === 1) {
+    const t = e.touches[0];
+    const dx = (t.clientX - rect.left) - startX;
+    const dy = (t.clientY - rect.top) - startY;
+    startX = t.clientX - rect.left;
+    startY = t.clientY - rect.top;
+    if (mode === "photo") { imgX += dx; imgY += dy; }
+    else { textX += dx; textY += dy; }
+  }
+  else if (isScaling && e.touches.length === 2) {
+    const dist = getDistance(e.touches);
+    const delta = dist / lastDistance;
+    lastDistance = dist;
+    if (mode === "photo") {
+      imgScale = Math.min(Math.max(.1, imgScale * delta), 5);
+    } else {
+      textScale = Math.min(Math.max(.5, textScale * delta), 3);
+    }
+  }
+  draw();
+}, {passive: false});
+
+canvas.addEventListener("touchend", e => {
+  if (e.touches.length < 2) isScaling = false;
+  if (e.touches.length === 0) isDragging = false;
+});
+
+// ────────────────────────────────────────────────
+// Функции отрисовки и управления
+// ────────────────────────────────────────────────
 
 function setColor(c){
-selectedColor=c;
-draw();
+  selectedColor = c;
+  draw();
 }
 
 function draw(){
-ctx.clearRect(0,0,1000,1000);
-ctx.fillStyle="#111";
-ctx.fillRect(0,0,1000,1000);
-
-if(image.src){
-const w=image.width*imgScale;
-const h=image.height*imgScale;
-ctx.drawImage(image,500-w/2+imgX,500-h/2+imgY,w,h);
-}
-
-ctx.textAlign="center";
-
-const fontSize = 100 * textScale;
-ctx.font = "bold " + fontSize + "px " + selectedFont;
-
-// свечение как во 2 html
-ctx.shadowColor = selectedColor;
-ctx.shadowBlur = 30;
-ctx.shadowOffsetX = 0;
-ctx.shadowOffsetY = 0;
-
-// базовая точка центра
-const centerX = 500 + textX;
-const baseY = 550 + textY;
-
-// верхняя строка
-ctx.fillStyle = "white";
-ctx.fillText("КОД", centerX, baseY - fontSize);
-
-// нижняя строка
-ctx.fillStyle = selectedColor;
-ctx.fillText("PRIVET", centerX, baseY);
-
-// сброс свечения
-ctx.shadowBlur = 0;
-ctx.shadowColor = "transparent";
+  ctx.clearRect(0,0,1000,1000);
+  ctx.fillStyle = "#111";
+  ctx.fillRect(0,0,1000,1000);
+  if(image.src){
+    const w = image.width * imgScale;
+    const h = image.height * imgScale;
+    ctx.drawImage(image, 500 - w/2 + imgX, 500 - h/2 + imgY, w, h);
+  }
+  ctx.textAlign = "center";
+  const fontSize = 100 * textScale;
+  ctx.font = "bold " + fontSize + "px " + selectedFont;
+  ctx.shadowColor = selectedColor;
+  ctx.shadowBlur = 30;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
+  const centerX = 500 + textX;
+  const baseY = 550 + textY;
+  ctx.fillStyle = "white";
+  ctx.fillText("КОД", centerX, baseY - fontSize);
+  ctx.fillStyle = selectedColor;
+  ctx.fillText("PRIVET", centerX, baseY);
+  ctx.shadowBlur = 0;
+  ctx.shadowColor = "transparent";
 }
 
 async function uploadToCloudinary(){
-const imageData=canvas.toDataURL("image/png");
-const formData=new FormData();
-formData.append("file",imageData);
-formData.append("upload_preset","privet");
-const response=await fetch(
-"https://api.cloudinary.com/v1_1/ddku1jwj7/image/upload",
-{method:"POST",body:formData}
-);
-const data=await response.json();
-if(data.secure_url){
-if(tg){tg.openLink(data.secure_url);}
-else{window.open(data.secure_url,"_blank");}
-}
+  console.log("Запуск uploadToCloudinary...");
+
+  try {
+    const imageData = canvas.toDataURL("image/png");
+    console.log("Data URL длина:", imageData.length); // если < 1000 — canvas пустой/tainted
+
+    if (imageData.length < 1000) {
+      throw new Error("Canvas пустой или tainted — невозможно получить изображение");
+    }
+
+    const formData = new FormData();
+    formData.append("file", imageData);
+    formData.append("upload_preset", "privet");
+
+    console.log("Отправка на Cloudinary...");
+
+    const response = await fetch(
+      "https://api.cloudinary.com/v1_1/ddku1jwj7/image/upload",
+      { method: "POST", body: formData }
+    );
+
+    console.log("Статус ответа:", response.status);
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Ошибка ${response.status}: ${errText}`);
+    }
+
+    const data = await response.json();
+    console.log("Ответ Cloudinary:", data);
+
+    const url = data.secure_url || data.url;
+    if (url) {
+      console.log("Успех! Ссылка:", url);
+      if (tg && tg.openLink) {
+        tg.openLink(url, { try_instant_view: false }); // без instant view иногда стабильнее
+      } else {
+        window.open(url, "_blank");
+      }
+    } else {
+      throw new Error("Нет secure_url в ответе");
+    }
+
+  } catch (err) {
+    console.error("Ошибка загрузки:", err);
+    alert("Ошибка Cloudinary: " + err.message + "\n\nСкачиваю PNG локально...");
+
+    // Fallback — прямое скачивание (работает в Telegram и браузере)
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL("image/png");
+    a.download = "privet-avatar.png";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
 }
 
-function downloadImage(){uploadToCloudinary();}
+function downloadImage() {
+  uploadToCloudinary();
+}
+
+function setMode(type){
+  mode = type;
+}
+
+function changeScale(delta){
+  if(mode==="photo"){
+    imgScale = Math.min(Math.max(.1, imgScale + delta), 5);
+  }else{
+    textScale = Math.min(Math.max(.5, textScale + delta), 3);
+  }
+  draw();
+}
+
+function setActive(el, className){
+  document.querySelectorAll("." + className).forEach(i=>i.classList.remove("active"));
+  el.classList.add("active");
+}
 
 draw();
 </script>
-
 </body>
 </html>
-
-
-
 
