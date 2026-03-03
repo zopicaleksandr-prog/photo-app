@@ -141,8 +141,8 @@
   }
   .kod-btn{
   background:linear-gradient(180deg,var(--green1),var(--green2));
-  border-radius:18px;
-  height:50px;
+  border-radius:10px;
+  height:20px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -277,9 +277,17 @@
 <button class="upload-btn" onclick="upload.click()">
 Загрузи фото из галереи...
 </button>
-<button class="kod-btn" onclick="location.href='https://link.standoff2.com/creator/bind/PRIVET'">
-Активировать код в игре
-</button>
+<button class="kod-btn">Открыть в браузере</button>
+
+<script>
+  document.getElementById("goBtn").onclick = () => {
+    // Самый надёжный и рекомендуемый способ в 2025–2026
+    Telegram.WebApp.openLink("https://link.standoff2.com/creator/bind/PRIVET");
+    
+    // или с параметрами (если хочешь попробовать Instant View — обычно не надо)
+    // Telegram.WebApp.openLink("https://your-site.com", { try_instant_view: false });
+  };
+</script>
 <input type="file" id="upload" hidden accept="image/*">
 <div class="preview-wrapper">
 <div class="controls">
@@ -593,6 +601,7 @@ draw();
 </script>
 </body>
 </html>
+
 
 
 
