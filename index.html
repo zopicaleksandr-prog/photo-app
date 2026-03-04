@@ -320,22 +320,6 @@
 </div>
 
 <script>
-@media (max-width: 600px) {
-  /* для мобильных уменьшаем свечение */
-  canvas {
-    /* можно ещё уменьшить canvas, но обычно не нужно */
-  }
-}
-
-/* А вот главное — переопределяем параметры тени только на мобильных */
-@media (max-width: 700px) {
-  /* !!! основной фикс !!! */
-  .mobile-reduced-glow {
-    shadow-blur: 12 !important;     /* было 30 → стало 12–15 */
-    /* или даже */
-    /* shadow-blur: 8 !important; */
-  }
-}
 const tg = window.Telegram?.WebApp;
 if(tg){
   tg.ready();
@@ -600,9 +584,26 @@ function setActive(el, className){
 }
 
 draw();
+@media (max-width: 600px) {
+  /* для мобильных уменьшаем свечение */
+  canvas {
+    /* можно ещё уменьшить canvas, но обычно не нужно */
+  }
+}
+
+/* А вот главное — переопределяем параметры тени только на мобильных */
+@media (max-width: 700px) {
+  /* !!! основной фикс !!! */
+  .mobile-reduced-glow {
+    shadow-blur: 12 !important;     /* было 30 → стало 12–15 */
+    /* или даже */
+    /* shadow-blur: 8 !important; */
+  }
+}
 </script>
 </body>
 </html>
+
 
 
 
