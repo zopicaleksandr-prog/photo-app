@@ -482,11 +482,6 @@ function draw(){
   }
   ctx.textAlign = "center";
   const fontSize = 100 * textScale;
-  let currentBlur = 30;
-  if (window.innerWidth <= 700) {
-    currentBlur = 12;          // можно 10–14, подбери под себя
-    // или ещё жёстче: currentBlur = window.innerWidth < 500 ? 8 : 14;
-  }
   ctx.font = "bold " + fontSize + "px " + selectedFont;
   ctx.shadowColor = selectedColor;
   ctx.shadowBlur = 20;
@@ -584,25 +579,10 @@ function setActive(el, className){
 }
 
 draw();
-@media (max-width: 600px) {
-  /* для мобильных уменьшаем свечение */
-  canvas {
-    /* можно ещё уменьшить canvas, но обычно не нужно */
-  }
-}
-
-/* А вот главное — переопределяем параметры тени только на мобильных */
-@media (max-width: 700px) {
-  /* !!! основной фикс !!! */
-  .mobile-reduced-glow {
-    shadow-blur: 12 !important;     /* было 30 → стало 12–15 */
-    /* или даже */
-    /* shadow-blur: 8 !important; */
-  }
-}
 </script>
 </body>
 </html>
+
 
 
 
